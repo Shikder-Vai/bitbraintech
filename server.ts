@@ -1,8 +1,8 @@
-import express from "express";
+import * as express from "express";
 import { createServer as createViteServer } from "vite";
-import path from "path";
+import * as path from "path";
 import { fileURLToPath } from "url";
-import { Innertube, UniversalCache, Platform } from 'youtubei.js';
+import { Innertube, UniversalCache, Platform, type SessionOptions } from 'youtubei.js';
 
 // Set up custom JS evaluator for youtubei.js
 Platform.shim.eval = (data, env) => {
@@ -38,7 +38,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 async function startServer() {
-  const app = express();
+  const app = typeof express === 'function' ? express() : (express as any).default();
   const PORT = process.env.PORT || 3000;
 
   // Set headers for ffmpeg.wasm (SharedArrayBuffer)
@@ -98,8 +98,8 @@ async function startServer() {
             const yt = await Innertube.create({
               cache: new UniversalCache(false),
               generate_session_locally: true,
-              clientType: 'WEB',
-            });
+              client_type: 'WEB',
+            } as SessionOptions);
             const info = await yt.getInfo(videoId);
             const format = info.chooseFormat({ type: 'video+audio', quality: 'best' });
             
@@ -374,7 +374,7 @@ async function startServer() {
           dumpSingleJson: true,
           noCheckCertificates: true,
           noWarnings: true
-        });
+        }) as any;
         
         if (output && output.url) {
           return res.json({
@@ -544,14 +544,21 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath, {
+    app.use('/assets', express.static(path.join(distPath, 'assets'), {
       setHeaders: (res, path) => {
         if (path.endsWith('.wasm')) {
           res.setHeader('Content-Type', 'application/wasm');
         }
+        if (path.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript');
+        }
       }
     }));
+    app.use(express.static(distPath));
     app.get("*", (req, res) => {
+      if (req.path.startsWith('/assets/')) {
+        return res.status(404).send('Not Found');
+      }
       res.sendFile(path.join(distPath, "index.html"));
     });
   }
