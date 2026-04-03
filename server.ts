@@ -1,4 +1,4 @@
-import * as express from "express";
+import express from "express";
 import { createServer as createViteServer } from "vite";
 import * as path from "path";
 import { fileURLToPath } from "url";
@@ -38,8 +38,8 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 async function startServer() {
-  const app = typeof express === 'function' ? express() : (express as any).default();
-  const PORT = process.env.PORT || 3000;
+  const app = express();
+  const PORT = parseInt(process.env.PORT || "3000", 10);
 
   // Set headers for ffmpeg.wasm (SharedArrayBuffer)
   app.use((req, res, next) => {

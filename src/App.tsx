@@ -161,10 +161,20 @@ export default function App() {
       const isDev = import.meta.env.MODE === 'development';
       
       console.log('Calling ffmpeg.load()...');
+      
+      const coreBlob = isDev ? coreURL : await toBlobURL(coreURL, 'text/javascript');
+      console.log('coreBlob loaded:', coreBlob);
+      
+      const wasmBlob = isDev ? wasmURL : await toBlobURL(wasmURL, 'application/wasm');
+      console.log('wasmBlob loaded:', wasmBlob);
+      
+      const workerBlob = isDev ? workerURL : await toBlobURL(workerURL, 'text/javascript');
+      console.log('workerBlob loaded:', workerBlob);
+      
       await ffmpeg.load({
-        coreURL: isDev ? coreURL : await toBlobURL(coreURL, 'text/javascript'),
-        wasmURL: isDev ? wasmURL : await toBlobURL(wasmURL, 'application/wasm'),
-        classWorkerURL: isDev ? workerURL : await toBlobURL(workerURL, 'text/javascript'),
+        coreURL: coreBlob,
+        wasmURL: wasmBlob,
+        workerURL: workerBlob,
       });
       console.log('ffmpeg.load() completed successfully.');
       
