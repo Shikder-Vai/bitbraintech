@@ -134,8 +134,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (logsEndRef.current) {
-      logsEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (logsEndRef.current && logsEndRef.current.parentElement) {
+      logsEndRef.current.parentElement.scrollTop = logsEndRef.current.parentElement.scrollHeight;
     }
   }, [logs]);
 
