@@ -155,20 +155,24 @@ export default function App() {
     });
 
     try {
-      console.log('Loading FFmpeg with:', { coreURL, wasmURL, workerURL });
+      console.log('Starting FFmpeg load process...');
+      console.log('FFmpeg assets:', { coreURL, wasmURL, workerURL });
       
       const isDev = import.meta.env.MODE === 'development';
       
+      console.log('Calling ffmpeg.load()...');
       await ffmpeg.load({
         coreURL: isDev ? coreURL : await toBlobURL(coreURL, 'text/javascript'),
         wasmURL: isDev ? wasmURL : await toBlobURL(wasmURL, 'application/wasm'),
         classWorkerURL: isDev ? workerURL : await toBlobURL(workerURL, 'text/javascript'),
       });
+      console.log('ffmpeg.load() completed successfully.');
+      
       setLoaded(true);
-      console.log('FFmpeg loaded successfully');
+      console.log('FFmpeg engine state set to loaded.');
     } catch (err: any) {
-      console.error('Failed to load FFmpeg:', err);
-      setError(`Failed to load video processing engine: ${err.message || 'Unknown error'}`);
+      console.error('CRITICAL: FFmpeg initialization failed:', err);
+      setError(`FFmpeg initialization failed: ${err.message || 'Unknown error'}`);
       addLog(`ERROR: Engine initialization failed: ${err.message || 'Unknown error'}`);
     }
   };
