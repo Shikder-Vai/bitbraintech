@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { fetchFile } from '@ffmpeg/util';
+import { fetchFile, toBlobURL } from '@ffmpeg/util';
 import coreURL from '@ffmpeg/core?url';
 import wasmURL from '@ffmpeg/core/wasm?url';
 import workerURL from '@ffmpeg/ffmpeg/worker?url';
@@ -155,16 +155,21 @@ export default function App() {
     });
 
     try {
+      console.log('Loading FFmpeg with:', { coreURL, wasmURL, workerURL });
+      
+      const isDev = import.meta.env.MODE === 'development';
+      
       await ffmpeg.load({
-        coreURL,
-        wasmURL,
-        classWorkerURL: workerURL,
+        coreURL: isDev ? coreURL : await toBlobURL(coreURL, 'text/javascript'),
+        wasmURL: isDev ? wasmURL : await toBlobURL(wasmURL, 'application/wasm'),
+        classWorkerURL: isDev ? workerURL : await toBlobURL(workerURL, 'text/javascript'),
       });
       setLoaded(true);
-    } catch (err) {
+      console.log('FFmpeg loaded successfully');
+    } catch (err: any) {
       console.error('Failed to load FFmpeg:', err);
-      setError('Failed to load video processing engine. Please ensure your browser supports SharedArrayBuffer.');
-      addLog('ERROR: Engine initialization failed.');
+      setError(`Failed to load video processing engine: ${err.message || 'Unknown error'}`);
+      addLog(`ERROR: Engine initialization failed: ${err.message || 'Unknown error'}`);
     }
   };
 
