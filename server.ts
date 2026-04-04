@@ -2,6 +2,7 @@ import express from "express";
 import { createServer as createViteServer } from "vite";
 import * as path from "path";
 import { fileURLToPath } from "url";
+import youtubedl from "youtube-dl-exec";
 import { Innertube, UniversalCache, Platform, type SessionOptions } from 'youtubei.js';
 
 // Set up custom JS evaluator for youtubei.js
@@ -369,8 +370,7 @@ async function startServer() {
       // --- UNIVERSAL FALLBACK: YT-DLP ---
       try {
         console.log(`Trying yt-dlp universal fallback for: ${url}`);
-        const youtubedl = (await import('youtube-dl-exec')).default;
-        const output = await youtubedl(url, {
+        const output = await (youtubedl as any)(url, {
           dumpSingleJson: true,
           noCheckCertificates: true,
           noWarnings: true

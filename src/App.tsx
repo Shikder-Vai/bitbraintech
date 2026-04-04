@@ -155,31 +155,37 @@ export default function App() {
     });
 
     try {
-      console.log('Starting FFmpeg load process...');
+      const startTime = performance.now();
+      console.log(`[${(startTime / 1000).toFixed(2)}s] Starting FFmpeg load process...`);
       console.log('FFmpeg assets:', { coreURL, wasmURL, workerURL });
       
       const isDev = import.meta.env.MODE === 'development';
       
-      console.log('Calling ffmpeg.load()...');
+      const logTime = (msg: string) => {
+        const elapsed = (performance.now() - startTime) / 1000;
+        console.log(`[${elapsed.toFixed(2)}s] ${msg}`);
+      };
+
+      logTime('Calling ffmpeg.load()...');
       
       const coreBlob = isDev ? coreURL : await toBlobURL(coreURL, 'text/javascript');
-      console.log('coreBlob loaded:', coreBlob);
+      logTime('coreBlob loaded');
       
       const wasmBlob = isDev ? wasmURL : await toBlobURL(wasmURL, 'application/wasm');
-      console.log('wasmBlob loaded:', wasmBlob);
+      logTime('wasmBlob loaded');
       
       const workerBlob = isDev ? workerURL : await toBlobURL(workerURL, 'text/javascript');
-      console.log('workerBlob loaded:', workerBlob);
+      logTime('workerBlob loaded');
       
       await ffmpeg.load({
         coreURL: coreBlob,
         wasmURL: wasmBlob,
         workerURL: workerBlob,
       });
-      console.log('ffmpeg.load() completed successfully.');
+      logTime('ffmpeg.load() completed successfully.');
       
       setLoaded(true);
-      console.log('FFmpeg engine state set to loaded.');
+      logTime('FFmpeg engine state set to loaded.');
     } catch (err: any) {
       console.error('CRITICAL: FFmpeg initialization failed:', err);
       setError(`FFmpeg initialization failed: ${err.message || 'Unknown error'}`);
