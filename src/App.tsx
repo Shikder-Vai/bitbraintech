@@ -156,36 +156,29 @@ export default function App() {
 
     try {
       const startTime = performance.now();
-      console.log(`[${(startTime / 1000).toFixed(2)}s] Starting FFmpeg load process...`);
-      console.log('FFmpeg assets:', { coreURL, wasmURL, workerURL });
       
       const isDev = import.meta.env.MODE === 'development';
       
-      const logTime = (msg: string) => {
-        const elapsed = (performance.now() - startTime) / 1000;
-        console.log(`[${elapsed.toFixed(2)}s] ${msg}`);
+      const loadWithCache = async (url: string, mimeType: string) => {
+        const cache = await caches.open('ffmpeg-cache-v1');
+        const cachedResponse = await cache.match(url);
+        if (cachedResponse) {
+          return URL.createObjectURL(await cachedResponse.blob());
+        }
+        
+        const response = await fetch(url);
+        const blob = await response.blob();
+        await cache.put(url, new Response(blob));
+        return URL.createObjectURL(blob);
       };
 
-      logTime('Calling ffmpeg.load()...');
-      
-      const coreBlob = isDev ? coreURL : await toBlobURL(coreURL, 'text/javascript');
-      logTime('coreBlob loaded');
-      
-      const wasmBlob = isDev ? wasmURL : await toBlobURL(wasmURL, 'application/wasm');
-      logTime('wasmBlob loaded');
-      
-      const workerBlob = isDev ? workerURL : await toBlobURL(workerURL, 'text/javascript');
-      logTime('workerBlob loaded');
-      
       await ffmpeg.load({
-        coreURL: coreBlob,
-        wasmURL: wasmBlob,
-        workerURL: workerBlob,
+        coreURL: isDev ? coreURL : await loadWithCache(coreURL, 'text/javascript'),
+        wasmURL: isDev ? wasmURL : await loadWithCache(wasmURL, 'application/wasm'),
+        workerURL: isDev ? workerURL : await loadWithCache(workerURL, 'text/javascript'),
       });
-      logTime('ffmpeg.load() completed successfully.');
       
       setLoaded(true);
-      logTime('FFmpeg engine state set to loaded.');
     } catch (err: any) {
       console.error('CRITICAL: FFmpeg initialization failed:', err);
       setError(`FFmpeg initialization failed: ${err.message || 'Unknown error'}`);
