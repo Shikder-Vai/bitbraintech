@@ -372,6 +372,7 @@ async function startServer() {
         console.log(`Trying yt-dlp universal fallback for: ${url}`);
         const output = await (youtubedl as any)(url, {
           dumpSingleJson: true,
+          ytDlpPath: './yt-dlp',
           noCheckCertificates: true,
           noWarnings: true
         }) as any;
