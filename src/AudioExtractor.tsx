@@ -39,10 +39,16 @@ export default function AudioExtractor() {
         return URL.createObjectURL(blob);
       };
 
+      const [coreBlob, wasmBlob, workerBlob] = await Promise.all([
+        isDev ? coreURL : loadWithCache(coreURL),
+        isDev ? wasmURL : loadWithCache(wasmURL),
+        isDev ? workerURL : loadWithCache(workerURL),
+      ]);
+
       await ffmpeg.load({
-        coreURL: isDev ? coreURL : await loadWithCache(coreURL),
-        wasmURL: isDev ? wasmURL : await loadWithCache(wasmURL),
-        workerURL: isDev ? workerURL : await loadWithCache(workerURL),
+        coreURL: coreBlob,
+        wasmURL: wasmBlob,
+        workerURL: workerBlob,
       });
       setLoaded(true);
     } catch (err: any) {

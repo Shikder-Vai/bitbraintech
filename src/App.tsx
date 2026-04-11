@@ -1,20 +1,21 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+
+const HowItWorks = lazy(() => import('./HowItWorks'));
+const PrivacyPolicy = lazy(() => import('./PrivacyPolicy'));
+const QrGenerator = lazy(() => import('./QrGenerator'));
+const OcrExtractor = lazy(() => import('./OcrExtractor'));
+const ImageUpscaler = lazy(() => import('./ImageUpscaler'));
+const ImageConverter = lazy(() => import('./ImageConverter'));
+const PdfTools = lazy(() => import('./PdfTools'));
+const AudioExtractor = lazy(() => import('./AudioExtractor'));
+
 import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { fetchFile, toBlobURL } from '@ffmpeg/util';
+import { fetchFile } from '@ffmpeg/util';
 import coreURL from '@ffmpeg/core?url';
 import wasmURL from '@ffmpeg/core/wasm?url';
 import workerURL from '@ffmpeg/ffmpeg/worker?url';
-import HowItWorks from './HowItWorks';
-import PrivacyPolicy from './PrivacyPolicy';
-import QrGenerator from './QrGenerator';
-import OcrExtractor from './OcrExtractor';
-import ImageUpscaler from './ImageUpscaler';
-import ImageConverter from './ImageConverter';
-import PdfTools from './PdfTools';
-import AudioExtractor from './AudioExtractor';
-
 import { 
   Upload, 
   Video, 
@@ -48,7 +49,7 @@ interface ProcessingOptions {
 export default function App() {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  const [ffmpegLoaded, setFfmpegLoaded] = useState(false);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -157,11 +158,9 @@ export default function App() {
     });
 
     try {
-      const startTime = performance.now();
-      
       const isDev = import.meta.env.MODE === 'development';
       
-      const loadWithCache = async (url: string, mimeType: string) => {
+      const loadWithCache = async (url: string) => {
         const cache = await caches.open('ffmpeg-cache-v1');
         const cachedResponse = await cache.match(url);
         if (cachedResponse) {
@@ -174,13 +173,19 @@ export default function App() {
         return URL.createObjectURL(blob);
       };
 
+      const [coreBlob, wasmBlob, workerBlob] = await Promise.all([
+        isDev ? coreURL : loadWithCache(coreURL),
+        isDev ? wasmURL : loadWithCache(wasmURL),
+        isDev ? workerURL : loadWithCache(workerURL),
+      ]);
+
       await ffmpeg.load({
-        coreURL: isDev ? coreURL : await loadWithCache(coreURL, 'text/javascript'),
-        wasmURL: isDev ? wasmURL : await loadWithCache(wasmURL, 'application/wasm'),
-        workerURL: isDev ? workerURL : await loadWithCache(workerURL, 'text/javascript'),
+        coreURL: coreBlob,
+        wasmURL: wasmBlob,
+        workerURL: workerBlob,
       });
       
-      setLoaded(true);
+      setFfmpegLoaded(true);
     } catch (err: any) {
       console.error('CRITICAL: FFmpeg initialization failed:', err);
       setError(`FFmpeg initialization failed: ${err.message || 'Unknown error'}`);
@@ -201,7 +206,7 @@ export default function App() {
 
   const processVideo = async () => {
     if (!videoFile) return;
-    if (!loaded) {
+    if (!ffmpegLoaded) {
       setError('FFmpeg engine is not loaded yet. Please wait.');
       return;
     }
@@ -414,7 +419,7 @@ export default function App() {
 
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex items-center gap-2 text-sm">
-              {!loaded ? (
+              {!ffmpegLoaded ? (
                 <span className="flex items-center gap-1.5 text-gray-500 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200">
                   <RefreshCw className="w-3.5 h-3.5 animate-spin" /> Initializing...
                 </span>
