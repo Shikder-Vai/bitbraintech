@@ -47,46 +47,142 @@ export default function OcrExtractor() {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        // Scale up for better OCR resolution (2x)
-        const scale = 2;
+        const scale = 2; // Scale up for better OCR resolution
         canvas.width = img.width * scale;
         canvas.height = img.height * scale;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         if (!ctx) return resolve(dataUrl);
 
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        
+        // 1. Grayscale
         const data = imageData.data;
-
-        // Apply grayscale and high contrast
         for (let i = 0; i < data.length; i += 4) {
-          const r = data[i];
-          const g = data[i + 1];
-          const b = data[i + 2];
-          
-          // Grayscale
-          let gray = 0.299 * r + 0.587 * g + 0.114 * b;
-          
-          // Contrast (increase by 50%)
-          const contrast = 1.5;
-          gray = (gray - 128) * contrast + 128;
-          
-          // Clamp
-          gray = Math.max(0, Math.min(255, gray));
+          const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+          data[i] = data[i + 1] = data[i + 2] = gray;
+        }
+        ctx.putImageData(imageData, 0, 0);
 
-          data[i] = gray;
-          data[i + 1] = gray;
-          data[i + 2] = gray;
+        // 2. De-skewing (Basic implementation)
+        const angle = detectSkew(imageData);
+        if (Math.abs(angle) > 0.5) {
+          const rotatedCanvas = document.createElement('canvas');
+          rotatedCanvas.width = canvas.width;
+          rotatedCanvas.height = canvas.height;
+          const rCtx = rotatedCanvas.getContext('2d');
+          if (rCtx) {
+            rCtx.translate(canvas.width / 2, canvas.height / 2);
+            rCtx.rotate((-angle * Math.PI) / 180);
+            rCtx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(rotatedCanvas, 0, 0);
+            imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          }
         }
 
+        // 3. Adaptive Thresholding (Bradley-Roth algorithm simplified)
+        applyAdaptiveThreshold(imageData, 15, 0.15);
         ctx.putImageData(imageData, 0, 0);
+
         resolve(canvas.toDataURL('image/png'));
       };
       img.src = dataUrl;
     });
+  };
+
+  // Helper: Detect skew angle using horizontal projection profile variance
+  const detectSkew = (imageData: ImageData): number => {
+    const { width, height, data } = imageData;
+    const angles = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
+    let maxVariance = -1;
+    let bestAngle = 0;
+
+    // Sample a portion of the image for speed
+    const step = 4;
+    for (const angle of angles) {
+      const projection = new Array(height).fill(0);
+      const rad = (angle * Math.PI) / 180;
+      const cos = Math.cos(rad);
+      const sin = Math.sin(rad);
+
+      for (let y = 0; y < height; y += step) {
+        for (let x = 0; x < width; x += step) {
+          const idx = (y * width + x) * 4;
+          if (data[idx] < 128) { // Dark pixel
+            const rotatedY = Math.round(-x * sin + y * cos);
+            if (rotatedY >= 0 && rotatedY < height) {
+              projection[rotatedY]++;
+            }
+          }
+        }
+      }
+
+      // Calculate variance of projection
+      let sum = 0;
+      let sumSq = 0;
+      let count = 0;
+      for (const val of projection) {
+        if (val > 0) {
+          sum += val;
+          sumSq += val * val;
+          count++;
+        }
+      }
+      const variance = count > 0 ? (sumSq / count) - (sum / count) ** 2 : 0;
+      if (variance > maxVariance) {
+        maxVariance = variance;
+        bestAngle = angle;
+      }
+    }
+    return bestAngle;
+  };
+
+  // Helper: Bradley-Roth Adaptive Thresholding
+  const applyAdaptiveThreshold = (imageData: ImageData, s: number, t: number) => {
+    const { width, height, data } = imageData;
+    const integralImage = new Int32Array(width * height);
+    
+    // Create integral image
+    for (let x = 0; x < width; x++) {
+      let sum = 0;
+      for (let y = 0; y < height; y++) {
+        const idx = y * width + x;
+        sum += data[idx * 4];
+        if (x === 0) {
+          integralImage[idx] = sum;
+        } else {
+          integralImage[idx] = integralImage[idx - 1] + sum;
+        }
+      }
+    }
+
+    // Perform thresholding
+    const halfS = Math.floor(s / 2);
+    for (let x = 0; x < width; x++) {
+      for (let y = 0; y < height; y++) {
+        const x1 = Math.max(x - halfS, 0);
+        const x2 = Math.min(x + halfS, width - 1);
+        const y1 = Math.max(y - halfS, 0);
+        const y2 = Math.min(y + halfS, height - 1);
+        
+        const count = (x2 - x1) * (y2 - y1);
+        const sum = integralImage[y2 * width + x2] 
+                  - integralImage[y1 * width + x2] 
+                  - integralImage[y2 * width + x1] 
+                  + integralImage[y1 * width + x1];
+
+        const idx = (y * width + x) * 4;
+        if (data[idx] * count < sum * (1.0 - t)) {
+          data[idx] = data[idx + 1] = data[idx + 2] = 0;
+        } else {
+          data[idx] = data[idx + 1] = data[idx + 2] = 255;
+        }
+      }
+    }
   };
 
   const extractText = async () => {
@@ -276,7 +372,7 @@ export default function OcrExtractor() {
                   />
                   <label htmlFor="enhance" className="text-sm text-gray-700 flex items-center gap-1 cursor-pointer">
                     <Wand2 className="w-4 h-4 text-gray-500" />
-                    Auto-enhance image for better accuracy (scaling & contrast)
+                    Advanced Preprocessing (Adaptive Thresholding, De-skewing & Scaling)
                   </label>
                 </div>
               </>

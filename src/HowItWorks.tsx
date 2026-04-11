@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Cpu, Lock, Zap, Image, QrCode, FileText, Hash, Sparkles, Youtube, Download } from 'lucide-react';
+import { ShieldCheck, Cpu, Lock, Zap, Image, QrCode, FileText, Hash, Sparkles, FileAudio, FileOutput } from 'lucide-react';
 
 export default function HowItWorks() {
   return (
@@ -88,11 +88,21 @@ export default function HowItWorks() {
 
         <section>
           <h3 className="text-lg font-semibold flex items-center gap-2 mb-3 text-gray-900">
-            <Download className="w-5 h-5 text-blue-600" />
-            YouTube & TikTok Video Downloaders
+            <FileOutput className="w-5 h-5 text-blue-600" />
+            PDF Toolkit: Merge, Split & Convert
           </h3>
           <p className="text-gray-600 leading-relaxed">
-            BitBrainTech now includes a <strong className="text-gray-800">free YouTube video downloader</strong> and a <strong className="text-gray-800">TikTok downloader without watermark</strong>. These tools allow you to <strong className="text-gray-800">save YouTube videos free</strong> and <strong className="text-gray-800">download TikTok MP4</strong> in high definition. We use secure, high-speed APIs to fetch direct download links, ensuring you can <strong className="text-gray-800">download YouTube videos in HD</strong> and get <strong className="text-gray-800">no watermark TikTok videos</strong> instantly for offline viewing or content creation.
+            Managing documents is easier with our <strong className="text-gray-800">free PDF toolkit</strong>. You can <strong className="text-gray-800">merge PDF files online</strong>, split large documents, or convert your photos into a single PDF. Like all our tools, this happens entirely in your browser, making it a <strong className="text-gray-800">secure PDF editor</strong> that protects your sensitive information from server-side leaks.
+          </p>
+        </section>
+
+        <section>
+          <h3 className="text-lg font-semibold flex items-center gap-2 mb-3 text-gray-900">
+            <FileAudio className="w-5 h-5 text-blue-600" />
+            Audio Extractor: Video to MP3
+          </h3>
+          <p className="text-gray-600 leading-relaxed">
+            Need to turn a video into a podcast or ringtone? Our <strong className="text-gray-800">audio extractor</strong> lets you <strong className="text-gray-800">convert video to MP3 free</strong>. It uses high-quality encoding to ensure your audio sounds crisp. This <strong className="text-gray-800">online video to audio converter</strong> is fast, reliable, and 100% private.
           </p>
         </section>
       </div>

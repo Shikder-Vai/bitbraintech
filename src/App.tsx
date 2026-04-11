@@ -12,7 +12,8 @@ import QrGenerator from './QrGenerator';
 import OcrExtractor from './OcrExtractor';
 import ImageUpscaler from './ImageUpscaler';
 import ImageConverter from './ImageConverter';
-import UniversalDownloader from './UniversalDownloader';
+import PdfTools from './PdfTools';
+import AudioExtractor from './AudioExtractor';
 
 import { 
   Upload, 
@@ -64,7 +65,8 @@ export default function App() {
   else if (path === '/image-to-text') pageKey = 'ocr';
   else if (path === '/image-upscaler') pageKey = 'upscaler';
   else if (path === '/image-converter') pageKey = 'converter';
-  else if (path === '/video-downloader') pageKey = 'video';
+  else if (path === '/pdf-tools') pageKey = 'pdf';
+  else if (path === '/audio-extractor') pageKey = 'audio';
 
   const seoData: Record<string, {title: string, description: string, url: string}> = {
     'home': {
@@ -102,15 +104,15 @@ export default function App() {
       description: 'Convert images between JPG, PNG, WEBP, and GIF formats instantly. Secure batch image converter with quality control. 100% private and local.',
       url: 'https://bitbraintech.online/image-converter'
     },
-    'youtube': {
-      title: 'Free YouTube Video Downloader | Download YouTube MP4 HD',
-      description: 'Download YouTube videos in high quality for free. Fast, secure, and easy to use online YouTube downloader. No software required.',
-      url: 'https://bitbraintech.online/video-downloader'
+    'pdf': {
+      title: 'Free PDF Toolkit | Merge, Split & Image to PDF Online',
+      description: 'Securely merge multiple PDFs, split pages, or convert images to PDF locally in your browser. 100% private PDF editor with no server uploads.',
+      url: 'https://bitbraintech.online/pdf-tools'
     },
-    'tiktok': {
-      title: 'TikTok Downloader Without Watermark | Save TikTok MP4',
-      description: 'Download TikTok videos without watermark in HD. Free online TikTok downloader for fast and secure video saving. No ads, no tracking.',
-      url: 'https://bitbraintech.online/tiktok-downloader'
+    'audio': {
+      title: 'Extract Audio from Video | Free Video to MP3 Converter',
+      description: 'Extract high-quality MP3 audio from any video file instantly. Secure, browser-based video to audio converter. No software or registration required.',
+      url: 'https://bitbraintech.online/audio-extractor'
     }
   };
 
@@ -397,10 +399,16 @@ export default function App() {
               Image Converter
             </Link>
             <Link 
-              to="/video-downloader" 
-              className={`transition-all px-3 py-2 rounded-lg ${location.pathname === '/video-downloader' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
+              to="/pdf-tools" 
+              className={`transition-all px-3 py-2 rounded-lg ${location.pathname === '/pdf-tools' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
             >
-              Video Downloader
+              PDF Tools
+            </Link>
+            <Link 
+              to="/audio-extractor" 
+              className={`transition-all px-3 py-2 rounded-lg ${location.pathname === '/audio-extractor' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
+            >
+              Audio Extractor
             </Link>
           </nav>
 
@@ -466,11 +474,18 @@ export default function App() {
               Image Converter
             </Link>
             <Link 
-              to="/video-downloader" 
+              to="/pdf-tools" 
               onClick={() => setIsMobileMenuOpen(false)} 
-              className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === '/video-downloader' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
+              className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === '/pdf-tools' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
             >
-              Video Downloader
+              PDF Tools
+            </Link>
+            <Link 
+              to="/audio-extractor" 
+              onClick={() => setIsMobileMenuOpen(false)} 
+              className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === '/audio-extractor' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
+            >
+              Audio Extractor
             </Link>
           </nav>
         )}
@@ -725,7 +740,8 @@ export default function App() {
           <Route path="/image-to-text" element={<OcrExtractor />} />
           <Route path="/image-upscaler" element={<ImageUpscaler />} />
           <Route path="/image-converter" element={<ImageConverter />} />
-          <Route path="/video-downloader" element={<UniversalDownloader />} />
+          <Route path="/pdf-tools" element={<PdfTools />} />
+          <Route path="/audio-extractor" element={<AudioExtractor />} />
         </Routes>
       </main>
 
