@@ -10,6 +10,7 @@ const ImageUpscaler = lazy(() => import('./ImageUpscaler'));
 const ImageConverter = lazy(() => import('./ImageConverter'));
 const PdfTools = lazy(() => import('./PdfTools'));
 const AudioExtractor = lazy(() => import('./AudioExtractor'));
+import ImageBackgroundRemover from './components/ImageBackgroundRemover';
 
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile } from '@ffmpeg/util';
@@ -30,7 +31,9 @@ import {
   Menu,
   X,
   Youtube,
-  Smartphone
+  Smartphone,
+  Facebook,
+  Image as ImageIcon
 } from 'lucide-react';
 
 function cn(...classes: (string | undefined | null | false)[]) {
@@ -50,6 +53,7 @@ export default function App() {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [ffmpegLoaded, setFfmpegLoaded] = useState(false);
+  const [isFfmpegLoading, setIsFfmpegLoading] = useState(false);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -68,52 +72,64 @@ export default function App() {
   else if (path === '/image-converter') pageKey = 'converter';
   else if (path === '/pdf-tools') pageKey = 'pdf';
   else if (path === '/audio-extractor') pageKey = 'audio';
+  else if (path === '/bg-remover') pageKey = 'bg-remover';
+  else if (path === '/video-editor') pageKey = 'video-editor';
 
   const seoData: Record<string, {title: string, description: string, url: string}> = {
     'home': {
+      title: 'AI Background Remover Pro | Free Online Background Removal',
+      description: 'Remove image backgrounds instantly with professional AI precision. Features manual mask refinement, zoom, pan, and 100% privacy. No upload required, runs in your browser.',
+      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/'
+    },
+    'video-editor': {
       title: 'Free Video Metadata Editor | Bypass Copyright YouTube & TikTok',
       description: 'Use our free video uniqueifier to alter digital footprints, change MD5 hash, and remove metadata. Bypass automated copyright detection on YouTube and TikTok securely.',
-      url: 'https://bitbraintech.online/'
+      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/video-editor'
     },
     'how-it-works': {
       title: 'How It Works | Secure Local Video & Image Processing',
       description: 'Discover how BitBrainTech uses WebAssembly for 100% private video editing and image processing. No server uploads, total data security.',
-      url: 'https://bitbraintech.online/how-it-works'
+      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/how-it-works'
     },
     'privacy': {
       title: 'Privacy Policy | 100% Private Video & Image Tools',
       description: 'Your privacy is our priority. BitBrainTech processes all files locally in your browser. No tracking, no server uploads, no data collection.',
-      url: 'https://bitbraintech.online/privacy'
+      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/privacy'
     },
     'qr-generator': {
       title: 'Free QR Code Generator | Custom Barcode Maker Online',
       description: 'Create custom QR codes and barcodes instantly. Privacy-first, offline generation with no tracking. Download high-res PNG codes for free.',
-      url: 'https://bitbraintech.online/qr-generator'
+      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/qr-generator'
     },
     'ocr': {
       title: 'Image to Text Converter | Free Online OCR Tool',
       description: 'Extract text from images and handwriting with our highly accurate OCR tool. Supports 10+ languages. Secure, fast, and free picture to text scanner.',
-      url: 'https://bitbraintech.online/image-to-text'
+      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/image-to-text'
     },
     'upscaler': {
       title: 'AI Image Upscaler | Enhance Resolution Online Free',
       description: 'Upscale images up to 8x without losing quality. Our AI image upscaler enhances resolution locally in your browser. Fix blurry photos for free.',
-      url: 'https://bitbraintech.online/image-upscaler'
+      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/image-upscaler'
     },
     'converter': {
       title: 'Free Image Converter Online | JPG, PNG, WEBP, GIF',
       description: 'Convert images between JPG, PNG, WEBP, and GIF formats instantly. Secure batch image converter with quality control. 100% private and local.',
-      url: 'https://bitbraintech.online/image-converter'
+      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/image-converter'
     },
     'pdf': {
       title: 'Free PDF Toolkit | Merge, Split & Image to PDF Online',
       description: 'Securely merge multiple PDFs, split pages, or convert images to PDF locally in your browser. 100% private PDF editor with no server uploads.',
-      url: 'https://bitbraintech.online/pdf-tools'
+      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/pdf-tools'
     },
     'audio': {
       title: 'Extract Audio from Video | Free Video to MP3 Converter',
       description: 'Extract high-quality MP3 audio from any video file instantly. Secure, browser-based video to audio converter. No software or registration required.',
-      url: 'https://bitbraintech.online/audio-extractor'
+      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/audio-extractor'
+    },
+    'bg-remover': {
+      title: 'Free AI Background Remover | Remove Image Background Online',
+      description: 'Remove backgrounds from images instantly using on-device AI. 100% private, secure, and free. No server uploads, total data security.',
+      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/'
     }
   };
 
@@ -133,7 +149,7 @@ export default function App() {
   const logsEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    load();
+    // FFmpeg is now loaded on demand in processVideo
   }, []);
 
   useEffect(() => {
@@ -146,7 +162,7 @@ export default function App() {
     setLogs(prev => [...prev.slice(-19), msg]);
   };
 
-  const load = async () => {
+  const loadFfmpeg = async (): Promise<boolean> => {
     const ffmpeg = ffmpegRef.current;
     
     ffmpeg.on('log', ({ message }) => {
@@ -157,6 +173,7 @@ export default function App() {
       setProgress(Math.round(progress * 100));
     });
 
+    setIsFfmpegLoading(true);
     try {
       const isDev = import.meta.env.MODE === 'development';
       
@@ -186,10 +203,20 @@ export default function App() {
       });
       
       setFfmpegLoaded(true);
+      setIsFfmpegLoading(false);
+      return true;
     } catch (err: any) {
+      setIsFfmpegLoading(false);
       console.error('CRITICAL: FFmpeg initialization failed:', err);
-      setError(`FFmpeg initialization failed: ${err.message || 'Unknown error'}`);
-      addLog(`ERROR: Engine initialization failed: ${err.message || 'Unknown error'}`);
+      const errorMessage = err.message || 'Unknown error';
+      setError(`FFmpeg initialization failed: ${errorMessage}`);
+      addLog(`ERROR: Engine initialization failed: ${errorMessage}`);
+      // Log stack trace if available
+      if (err.stack) {
+        console.error('Stack trace:', err.stack);
+        addLog(`Stack: ${err.stack.substring(0, 100)}...`);
+      }
+      return false;
     }
   };
 
@@ -206,9 +233,17 @@ export default function App() {
 
   const processVideo = async () => {
     if (!videoFile) return;
+    
+    // Check if engine is ready
     if (!ffmpegLoaded) {
-      setError('FFmpeg engine is not loaded yet. Please wait.');
-      return;
+      setProcessing(true);
+      addLog('Initializing engine...');
+      const isReady = await loadFfmpeg();
+      if (!isReady) {
+        setProcessing(false);
+        setError('Failed to initialize engine.');
+        return;
+      }
     }
 
     setProcessing(true);
@@ -359,84 +394,93 @@ export default function App() {
       </Helmet>
 
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link 
-            to="/"
-            className="flex items-center gap-2 transition-opacity hover:opacity-80"
-          >
-            <div className="bg-blue-600 p-1.5 rounded-lg">
-              <ShieldCheck className="text-white w-5 h-5" />
-            </div>
-            <h1 className="font-extrabold text-xl tracking-tight text-gray-900">BitBrainTech</h1>
-          </Link>
-          
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1 text-sm font-medium text-gray-600">
-            <Link 
-              to="/" 
-              className={`transition-all px-3 py-2 rounded-lg ${location.pathname === '/' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              Video Editor
+      <header className="bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-200 group-hover:scale-105 transition-transform">
+                <ShieldCheck className="text-white w-5 h-5" />
+              </div>
+              <span className="font-bold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+                BitBrainTech
+              </span>
             </Link>
-            <Link 
-              to="/qr-generator" 
-              className={`transition-all px-3 py-2 rounded-lg ${location.pathname === '/qr-generator' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              QR Generator
-            </Link>
-            <Link 
-              to="/image-to-text" 
-              className={`transition-all px-3 py-2 rounded-lg ${location.pathname === '/image-to-text' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              Image to Text
-            </Link>
-            <Link 
-              to="/image-upscaler" 
-              className={`transition-all px-3 py-2 rounded-lg ${location.pathname === '/image-upscaler' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              Image Upscaler
-            </Link>
-            <Link 
-              to="/image-converter" 
-              className={`transition-all px-3 py-2 rounded-lg ${location.pathname === '/image-converter' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              Image Converter
-            </Link>
-            <Link 
-              to="/pdf-tools" 
-              className={`transition-all px-3 py-2 rounded-lg ${location.pathname === '/pdf-tools' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              PDF Tools
-            </Link>
-            <Link 
-              to="/audio-extractor" 
-              className={`transition-all px-3 py-2 rounded-lg ${location.pathname === '/audio-extractor' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              Audio Extractor
-            </Link>
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 text-sm">
-              {!ffmpegLoaded ? (
-                <span className="flex items-center gap-1.5 text-gray-500 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200">
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin" /> Initializing...
-                </span>
-              ) : (
-                <span className="flex items-center gap-1.5 text-green-700 font-medium bg-green-50 px-3 py-1.5 rounded-full border border-green-200">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> Engine Ready
-                </span>
-              )}
-            </div>
             
-            {/* Mobile Menu Button */}
-            <button 
-              className="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center bg-gray-50/50 p-1 rounded-xl border border-gray-100">
+              <Link 
+                to="/" 
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${location.pathname === '/' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'}`}
+              >
+                BG Remover
+              </Link>
+              <Link 
+                to="/video-editor" 
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${location.pathname === '/video-editor' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'}`}
+              >
+                Video Editor
+              </Link>
+              
+              <div className="w-px h-4 bg-gray-200 mx-1" />
+              
+              {/* Dropdown for More Tools */}
+              <div className="relative group/menu">
+                <button className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white/50 flex items-center gap-1">
+                  More Tools
+                  <Menu className="w-4 h-4" />
+                </button>
+                <div className="absolute top-full right-0 mt-1 w-56 bg-white border border-gray-100 rounded-xl shadow-xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all transform origin-top-right scale-95 group-hover/menu:scale-100 p-1.5">
+                  <Link to="/qr-generator" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    QR Generator
+                  </Link>
+                  <Link to="/image-to-text" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    Image to Text
+                  </Link>
+                  <Link to="/image-upscaler" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    Image Upscaler
+                  </Link>
+                  <Link to="/image-converter" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    Image Converter
+                  </Link>
+                  <Link to="/pdf-tools" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    PDF Tools
+                  </Link>
+                  <Link to="/audio-extractor" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    Audio Extractor
+                  </Link>
+                </div>
+              </div>
+            </nav>
+
+            <div className="flex items-center gap-3">
+              {/* Engine Status */}
+              <div className="hidden md:block">
+                {ffmpegLoaded ? (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full border border-green-100 text-xs font-semibold">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    Engine Ready
+                  </div>
+                ) : isFfmpegLoading ? (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full border border-blue-100 text-xs font-semibold">
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    Initializing...
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-500 rounded-full border border-gray-100 text-xs font-medium">
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    Standby
+                  </div>
+                )}
+              </div>
+              
+              <button 
+                className="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -447,6 +491,13 @@ export default function App() {
               to="/" 
               onClick={() => setIsMobileMenuOpen(false)} 
               className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === '/' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
+            >
+              BG Remover
+            </Link>
+            <Link 
+              to="/video-editor" 
+              onClick={() => setIsMobileMenuOpen(false)} 
+              className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === '/video-editor' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
             >
               Video Editor
             </Link>
@@ -498,7 +549,8 @@ export default function App() {
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8">
         <Routes>
-          <Route path="/" element={
+          <Route path="/" element={<ImageBackgroundRemover />} />
+          <Route path="/video-editor" element={
             <>
             <div className="grid md:grid-cols-2 gap-8">
               {/* Left Column: Upload & Preview */}
@@ -747,6 +799,7 @@ export default function App() {
           <Route path="/image-converter" element={<ImageConverter />} />
           <Route path="/pdf-tools" element={<PdfTools />} />
           <Route path="/audio-extractor" element={<AudioExtractor />} />
+          <Route path="/bg-remover" element={<Link to="/" className="text-blue-600 underline">Go to Home</Link>} />
         </Routes>
       </main>
 
@@ -772,6 +825,15 @@ export default function App() {
             >
               Privacy Policy
             </Link>
+            <a 
+              href="https://www.facebook.com/bitbraintechns" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 transition-colors hover:text-blue-600"
+            >
+              <Facebook className="w-4 h-4" />
+              Facebook
+            </a>
           </div>
           <p className="text-xs text-gray-500 text-center max-w-2xl">
             <strong>Disclaimer:</strong> BitBrainTech provides tools for personal, educational, and fair-use purposes only. Users are solely responsible for ensuring they have the right to download, modify, or process any media. We do not host or store user files on our servers.
