@@ -22,10 +22,10 @@ export default function PrivacyPolicy() {
         <section className="bg-blue-50 p-6 rounded-lg border border-blue-100">
           <h3 className="text-lg font-semibold flex items-center gap-2 mb-3 text-blue-900">
             <ServerOff className="w-5 h-5 text-blue-600" />
-            No Server Upload Video Editor
+            Local-Only Processing (No Server Uploads)
           </h3>
           <p className="text-blue-800">
-            <strong>We do not upload, store, or process your videos or images on our servers.</strong> We operate as a <strong className="text-blue-900">secure video editor</strong> with <strong className="text-blue-900">local video processing in browser</strong>. All tasks, from trying to <strong className="text-blue-900">alter video digital footprint</strong> to using our <strong className="text-blue-900">free image upscaler</strong> or <strong className="text-blue-900">image converter</strong>, are performed locally on your device using WebAssembly technology. Once you close the tab, all processed data is immediately destroyed from your device's temporary memory, ensuring <strong className="text-blue-900">100% private video editing</strong>.
+            <strong>We do not upload, store, or process your files on our servers.</strong> BitBrainTech operates as a <strong className="text-blue-900">secure local processing suite</strong>. Whether you are using our <strong className="text-blue-900">AI Background Remover</strong>, <strong className="text-blue-900">Video Metadata Editor</strong>, or <strong className="text-blue-900">Image Upscaler</strong>, all tasks are performed locally on your device using WebAssembly and On-Device AI. Once you close the tab, all processed data is immediately destroyed from your device's temporary memory, ensuring <strong className="text-blue-900">100% private processing</strong>.
           </p>
         </section>
 
@@ -64,8 +64,8 @@ export default function PrivacyPolicy() {
             If you have any questions or concerns about this Privacy Policy or how your data is handled, please feel free to reach out to us at:
           </p>
           <p className="mt-2">
-            <a href="mailto:nshacker204@gmail.com" className="text-blue-600 hover:underline font-medium">
-              nshacker204@gmail.com
+            <a href="mailto:mdnurujjaman987@gmail.com" className="text-blue-600 hover:underline font-medium">
+              mdnurujjaman987@gmail.com
             </a>
           </p>
         </section>

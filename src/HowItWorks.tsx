@@ -9,8 +9,18 @@ export default function HowItWorks() {
       <div className="space-y-8">
         <section>
           <h3 className="text-lg font-semibold flex items-center gap-2 mb-3 text-gray-900">
+            <Sparkles className="w-5 h-5 text-blue-600" />
+            AI Background Remover (On-Device AI)
+          </h3>
+          <p className="text-gray-600 leading-relaxed">
+            Our <strong className="text-gray-800">AI Background Remover</strong> uses a state-of-the-art neural network that runs directly in your browser. Unlike traditional tools that send your photos to a cloud server, BitBrainTech performs the segmentation locally. This means your private photos never leave your computer, providing professional-grade results with <strong className="text-gray-800">100% data privacy</strong>.
+          </p>
+        </section>
+
+        <section>
+          <h3 className="text-lg font-semibold flex items-center gap-2 mb-3 text-gray-900">
             <Lock className="w-5 h-5 text-blue-600" />
-            100% Private, Local Video Processing in Browser
+            100% Private, Local Video Processing
           </h3>
           <p className="text-gray-600 leading-relaxed">
             Unlike most online tools, BitBrainTech is a <strong className="text-gray-800">secure video editor</strong> that processes your files entirely within your web browser. 
