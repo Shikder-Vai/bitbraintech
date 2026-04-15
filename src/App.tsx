@@ -79,57 +79,57 @@ export default function App() {
     'home': {
       title: 'AI Background Remover Pro | Free Online Background Removal',
       description: 'Remove image backgrounds instantly with professional AI precision. Features manual mask refinement, zoom, pan, and 100% privacy. No upload required, runs in your browser.',
-      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/'
+      url: 'https://bitbraintech.online/'
     },
     'video-editor': {
       title: 'Free Video Metadata Editor | Bypass Copyright YouTube & TikTok',
       description: 'Use our free video uniqueifier to alter digital footprints, change MD5 hash, and remove metadata. Bypass automated copyright detection on YouTube and TikTok securely.',
-      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/video-editor'
+      url: 'https://bitbraintech.online/video-editor'
     },
     'how-it-works': {
       title: 'How It Works | Secure Local Video & Image Processing',
       description: 'Discover how BitBrainTech uses WebAssembly for 100% private video editing and image processing. No server uploads, total data security.',
-      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/how-it-works'
+      url: 'https://bitbraintech.online/how-it-works'
     },
     'privacy': {
       title: 'Privacy Policy | 100% Private Video & Image Tools',
       description: 'Your privacy is our priority. BitBrainTech processes all files locally in your browser. No tracking, no server uploads, no data collection.',
-      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/privacy'
+      url: 'https://bitbraintech.online/privacy'
     },
     'qr-generator': {
       title: 'Free QR Code Generator | Custom Barcode Maker Online',
       description: 'Create custom QR codes and barcodes instantly. Privacy-first, offline generation with no tracking. Download high-res PNG codes for free.',
-      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/qr-generator'
+      url: 'https://bitbraintech.online/qr-generator'
     },
     'ocr': {
       title: 'Image to Text Converter | Free Online OCR Tool',
       description: 'Extract text from images and handwriting with our highly accurate OCR tool. Supports 10+ languages. Secure, fast, and free picture to text scanner.',
-      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/image-to-text'
+      url: 'https://bitbraintech.online/image-to-text'
     },
     'upscaler': {
       title: 'AI Image Upscaler | Enhance Resolution Online Free',
       description: 'Upscale images up to 8x without losing quality. Our AI image upscaler enhances resolution locally in your browser. Fix blurry photos for free.',
-      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/image-upscaler'
+      url: 'https://bitbraintech.online/image-upscaler'
     },
     'converter': {
       title: 'Free Image Converter Online | JPG, PNG, WEBP, GIF',
       description: 'Convert images between JPG, PNG, WEBP, and GIF formats instantly. Secure batch image converter with quality control. 100% private and local.',
-      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/image-converter'
+      url: 'https://bitbraintech.online/image-converter'
     },
     'pdf': {
       title: 'Free PDF Toolkit | Merge, Split & Image to PDF Online',
       description: 'Securely merge multiple PDFs, split pages, or convert images to PDF locally in your browser. 100% private PDF editor with no server uploads.',
-      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/pdf-tools'
+      url: 'https://bitbraintech.online/pdf-tools'
     },
     'audio': {
       title: 'Extract Audio from Video | Free Video to MP3 Converter',
       description: 'Extract high-quality MP3 audio from any video file instantly. Secure, browser-based video to audio converter. No software or registration required.',
-      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/audio-extractor'
+      url: 'https://bitbraintech.online/audio-extractor'
     },
     'bg-remover': {
       title: 'Free AI Background Remover | Remove Image Background Online',
       description: 'Remove backgrounds from images instantly using on-device AI. 100% private, secure, and free. No server uploads, total data security.',
-      url: 'https://ais-dev-uwk6wtikhw7u7nr2g32qqv-573475868306.run.app/'
+      url: 'https://bitbraintech.online/'
     }
   };
 
