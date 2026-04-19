@@ -4,6 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
+    <!-- Fix for 'ethereum' redefinition error caused by some browser extensions -->
+    <script>
+      (function() {
+        if (window.ethereum) return;
+        let ethereum;
+        Object.defineProperty(window, 'ethereum', {
+          get() { return ethereum; },
+          set(v) { ethereum = v; },
+          configurable: true
+        });
+      })();
+    </script>
+
     <!-- Primary Meta Tags -->
     <title>BitBrainTech | Professional Media & AI Tools Suite</title>
     <meta name="title" content="BitBrainTech | Professional Media & AI Tools Suite" />
