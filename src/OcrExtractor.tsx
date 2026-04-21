@@ -59,73 +59,94 @@ export default function OcrExtractor() {
         
         let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         
-        // 1. Grayscale
+        // 1. Grayscale & Contrast Enhancement
         const data = imageData.data;
         for (let i = 0; i < data.length; i += 4) {
           const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
           data[i] = data[i + 1] = data[i + 2] = gray;
         }
-        ctx.putImageData(imageData, 0, 0);
+        
+        // 1b. Sharpen Filter (Improves character definition)
+        const sharpenedData = applySharpen(imageData);
+        ctx.putImageData(sharpenedData, 0, 0);
 
-        // 2. De-skewing (Basic implementation)
-        const angle = detectSkew(imageData);
-        if (Math.abs(angle) > 0.5) {
+        // 2. De-skewing (Optimized horizontal projection)
+        const angle = detectSkew(sharpenedData);
+        if (Math.abs(angle) > 0.2) {
           const rotatedCanvas = document.createElement('canvas');
           rotatedCanvas.width = canvas.width;
           rotatedCanvas.height = canvas.height;
           const rCtx = rotatedCanvas.getContext('2d');
           if (rCtx) {
+            rCtx.fillStyle = 'white';
+            rCtx.fillRect(0, 0, rotatedCanvas.width, rotatedCanvas.height);
             rCtx.translate(canvas.width / 2, canvas.height / 2);
             rCtx.rotate((-angle * Math.PI) / 180);
             rCtx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(rotatedCanvas, 0, 0);
             imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          } else {
+            imageData = sharpenedData;
           }
+        } else {
+          imageData = sharpenedData;
         }
 
-        // 3. Adaptive Thresholding (Bradley-Roth algorithm simplified)
-        applyAdaptiveThreshold(imageData, 15, 0.15);
+        // 3. Optimized Adaptive Thresholding
+        applyAdaptiveThreshold(imageData, Math.floor(canvas.width / 8), 0.15);
         ctx.putImageData(imageData, 0, 0);
 
-        resolve(canvas.toDataURL('image/png'));
+        resolve(canvas.toDataURL('image/png', 0.92));
       };
       img.src = dataUrl;
     });
   };
 
-  // Helper: Detect skew angle using horizontal projection profile variance
+  // Helper: Detect skew angle using optimized horizontal projection profile variance
   const detectSkew = (imageData: ImageData): number => {
     const { width, height, data } = imageData;
-    const angles = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
+    const angles = [];
+    for (let a = -10; a <= 10; a += 0.5) angles.push(a);
+    
     let maxVariance = -1;
     let bestAngle = 0;
 
-    // Sample a portion of the image for speed
-    const step = 4;
-    for (const angle of angles) {
-      const projection = new Array(height).fill(0);
-      const rad = (angle * Math.PI) / 180;
-      const cos = Math.cos(rad);
-      const sin = Math.sin(rad);
+    const startY = Math.floor(height * 0.2);
+    const endY = Math.floor(height * 0.8);
+    const startX = Math.floor(width * 0.2);
+    const endX = Math.floor(width * 0.8);
+    const sampleWidth = endX - startX;
+    const sampleHeight = endY - startY;
 
-      for (let y = 0; y < height; y += step) {
-        for (let x = 0; x < width; x += step) {
+    const step = Math.max(2, Math.floor(sampleWidth / 200));
+
+    for (const angle of angles) {
+      const projection = new Int32Array(sampleHeight);
+      const rad = (angle * Math.PI) / 180;
+      const sin = Math.sin(rad);
+      const cos = Math.cos(rad);
+
+      for (let y = startY; y < endY; y += step) {
+        for (let x = startX; x < endX; x += step) {
           const idx = (y * width + x) * 4;
-          if (data[idx] < 128) { // Dark pixel
-            const rotatedY = Math.round(-x * sin + y * cos);
-            if (rotatedY >= 0 && rotatedY < height) {
-              projection[rotatedY]++;
+          if (data[idx] < 120) {
+            const relX = x - width / 2;
+            const relY = y - height / 2;
+            const rotatedY = Math.round(-relX * sin + relY * cos + height / 2);
+            const py = rotatedY - startY;
+            if (py >= 0 && py < sampleHeight) {
+              projection[py]++;
             }
           }
         }
       }
 
-      // Calculate variance of projection
       let sum = 0;
       let sumSq = 0;
       let count = 0;
-      for (const val of projection) {
+      for (let i = 0; i < sampleHeight; i++) {
+        const val = projection[i];
         if (val > 0) {
           sum += val;
           sumSq += val * val;
@@ -141,39 +162,69 @@ export default function OcrExtractor() {
     return bestAngle;
   };
 
-  // Helper: Bradley-Roth Adaptive Thresholding
+  // Helper: Fast Convolution (Sharpen)
+  const applySharpen = (imageData: ImageData): ImageData => {
+    const { width, height, data } = imageData;
+    const output = new Uint8ClampedArray(data.length);
+    const kernel = [
+      0, -1, 0,
+      -1, 5, -1,
+      0, -1, 0
+    ];
+
+    for (let y = 1; y < height - 1; y++) {
+      for (let x = 1; x < width - 1; x++) {
+        const sy = y * width + x;
+        let r = 0;
+        for (let ky = -1; ky <= 1; ky++) {
+          for (let kx = -1; kx <= 1; kx++) {
+            const idx = ((y + ky) * width + (x + kx)) * 4;
+            const k = kernel[(ky + 1) * 3 + (kx + 1)];
+            r += data[idx] * k;
+          }
+        }
+        const o = sy * 4;
+        output[o] = output[o+1] = output[o+2] = Math.min(255, Math.max(0, r));
+        output[o+3] = 255;
+      }
+    }
+    return new ImageData(output, width, height);
+  };
+
+  // Helper: Optimized Bradley-Roth Adaptive Thresholding
   const applyAdaptiveThreshold = (imageData: ImageData, s: number, t: number) => {
     const { width, height, data } = imageData;
     const integralImage = new Int32Array(width * height);
     
-    // Create integral image
-    for (let x = 0; x < width; x++) {
-      let sum = 0;
-      for (let y = 0; y < height; y++) {
+    for (let y = 0; y < height; y++) {
+      let lineSum = 0;
+      for (let x = 0; x < width; x++) {
         const idx = y * width + x;
-        sum += data[idx * 4];
-        if (x === 0) {
-          integralImage[idx] = sum;
+        lineSum += data[idx * 4];
+        if (y === 0) {
+          integralImage[idx] = lineSum;
         } else {
-          integralImage[idx] = integralImage[idx - 1] + sum;
+          integralImage[idx] = integralImage[(y - 1) * width + x] + lineSum;
         }
       }
     }
 
-    // Perform thresholding
     const halfS = Math.floor(s / 2);
-    for (let x = 0; x < width; x++) {
-      for (let y = 0; y < height; y++) {
+    for (let y = 0; y < height; y++) {
+      const y1 = Math.max(y - halfS, 0);
+      const y2 = Math.min(y + halfS, height - 1);
+      const rowY2 = y2 * width;
+      const rowY1 = (y1 - 1) * width;
+
+      for (let x = 0; x < width; x++) {
         const x1 = Math.max(x - halfS, 0);
         const x2 = Math.min(x + halfS, width - 1);
-        const y1 = Math.max(y - halfS, 0);
-        const y2 = Math.min(y + halfS, height - 1);
         
         const count = (x2 - x1) * (y2 - y1);
-        const sum = integralImage[y2 * width + x2] 
-                  - integralImage[y1 * width + x2] 
-                  - integralImage[y2 * width + x1] 
-                  + integralImage[y1 * width + x1];
+        let sum = integralImage[rowY2 + x2];
+        if (y1 > 0) sum -= integralImage[rowY1 + x2];
+        if (x1 > 0) sum -= integralImage[rowY2 + (x1 - 1)];
+        if (y1 > 0 && x1 > 0) sum += integralImage[rowY1 + (x1 - 1)];
 
         const idx = (y * width + x) * 4;
         if (data[idx] * count < sum * (1.0 - t)) {

@@ -2,9 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
 import { Music, Video, Download, RefreshCw, CheckCircle2, AlertCircle, FileAudio } from 'lucide-react';
-import coreURL from '@ffmpeg/core?url';
-import wasmURL from '@ffmpeg/core/wasm?url';
-import workerURL from '@ffmpeg/ffmpeg/worker?url';
 
 export default function AudioExtractor() {
   const [loaded, setLoaded] = useState(false);
@@ -27,28 +24,10 @@ export default function AudioExtractor() {
     });
 
     try {
-      const isDev = import.meta.env.MODE === 'development';
-      
-      const loadWithCache = async (url: string) => {
-        const cache = await caches.open('ffmpeg-cache-v1');
-        const cachedResponse = await cache.match(url);
-        if (cachedResponse) return URL.createObjectURL(await cachedResponse.blob());
-        const response = await fetch(url);
-        const blob = await response.blob();
-        await cache.put(url, new Response(blob));
-        return URL.createObjectURL(blob);
-      };
-
-      const [coreBlob, wasmBlob, workerBlob] = await Promise.all([
-        isDev ? coreURL : loadWithCache(coreURL),
-        isDev ? wasmURL : loadWithCache(wasmURL),
-        isDev ? workerURL : loadWithCache(workerURL),
-      ]);
-
+      const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
       await ffmpeg.load({
-        coreURL: coreBlob,
-        wasmURL: wasmBlob,
-        workerURL: workerBlob,
+        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
       });
       setLoaded(true);
     } catch (err: any) {

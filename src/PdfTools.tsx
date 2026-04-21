@@ -8,11 +8,27 @@ export default function PdfTools() {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [splitRange, setSplitRange] = useState<string>('');
+  const [splitOption, setSplitOption] = useState<'all' | 'range'>('all');
+  const [totalPages, setTotalPages] = useState<number>(0);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(e.target.files || []);
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []) as File[];
     if (selectedFiles.length > 0) {
-      setFiles(prev => [...prev, ...selectedFiles]);
+      if (mode === 'split') {
+        const file = selectedFiles[0];
+        setFiles([file]);
+        try {
+          const bytes = await file.arrayBuffer();
+          const pdf = await PDFDocument.load(bytes);
+          setTotalPages(pdf.getPageCount());
+          setSplitRange(`1-${pdf.getPageCount()}`);
+        } catch (err) {
+          setError('Failed to read PDF pages.');
+        }
+      } else {
+        setFiles(prev => [...prev, ...selectedFiles]);
+      }
       setError(null);
       setSuccess(null);
     }
@@ -20,6 +36,7 @@ export default function PdfTools() {
 
   const removeFile = (index: number) => {
     setFiles(prev => prev.filter((_, i) => i !== index));
+    if (mode === 'split') setTotalPages(0);
   };
 
   const mergePdfs = async () => {
@@ -52,24 +69,65 @@ export default function PdfTools() {
       return;
     }
     setProcessing(true);
+    setError(null);
+    setSuccess(null);
+
     try {
       const file = files[0];
       const pdfBytes = await file.arrayBuffer();
       const pdf = await PDFDocument.load(pdfBytes);
-      const pageCount = pdf.getPageCount();
+      const count = pdf.getPageCount();
       
-      // For simplicity, we'll just extract each page as a separate file or just the first 5
-      // Here we'll just extract all pages into one new PDF as a demo of "processing"
-      // In a real app, you'd let user pick ranges.
-      const newPdf = await PDFDocument.create();
-      const copiedPages = await newPdf.copyPages(pdf, [0]); // Extract first page
-      newPdf.addPage(copiedPages[0]);
-      
-      const outBytes = await newPdf.save();
-      downloadFile(outBytes, 'extracted_page_1.pdf', 'application/pdf');
-      setSuccess('First page extracted successfully!');
-    } catch (err) {
-      setError('Failed to split PDF.');
+      if (splitOption === 'range') {
+        // Parse range: e.g., "1, 3, 5-7"
+        const pagesToExtract: number[] = [];
+        const parts = splitRange.split(',').map(p => p.trim());
+        
+        for (const part of parts) {
+          if (part.includes('-')) {
+            const [start, end] = part.split('-').map(n => parseInt(n));
+            if (!isNaN(start) && !isNaN(end)) {
+              for (let i = start; i <= end; i++) {
+                if (i >= 1 && i <= count) pagesToExtract.push(i - 1);
+              }
+            }
+          } else {
+            const pageNum = parseInt(part);
+            if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= count) {
+              pagesToExtract.push(pageNum - 1);
+            }
+          }
+        }
+
+        if (pagesToExtract.length === 0) {
+          throw new Error('No valid pages found in range.');
+        }
+
+        const newPdf = await PDFDocument.create();
+        const uniquePages = Array.from(new Set(pagesToExtract)).sort((a, b) => a - b);
+        const copiedPages = await newPdf.copyPages(pdf, uniquePages);
+        copiedPages.forEach(p => newPdf.addPage(p));
+        
+        const outBytes = await newPdf.save();
+        downloadFile(outBytes, `extracted_pages_${Date.now()}.pdf`, 'application/pdf');
+        setSuccess(`Successfully extracted ${uniquePages.length} pages.`);
+      } else {
+        // Split all pages into individual files
+        // Note: multiple downloads might be blocked by some browsers
+        for (let i = 0; i < count; i++) {
+          const newPdf = await PDFDocument.create();
+          const [copiedPage] = await newPdf.copyPages(pdf, [i]);
+          newPdf.addPage(copiedPage);
+          const outBytes = await newPdf.save();
+          downloadFile(outBytes, `${file.name.replace('.pdf', '')}_page_${i + 1}.pdf`, 'application/pdf');
+          
+          // Small delay to help browser handle multiple downloads
+          if (count > 1) await new Promise(r => setTimeout(r, 100));
+        }
+        setSuccess(`Successfully split into ${count} individual files.`);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to split PDF. Please check the range format.');
     } finally {
       setProcessing(false);
     }
@@ -185,6 +243,49 @@ export default function PdfTools() {
             </div>
           )}
 
+          {files.length > 0 && mode === 'split' && (
+            <div className="p-6 bg-blue-50/50 rounded-xl border border-blue-100 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-blue-900 uppercase tracking-wider">Split Options</h3>
+                <span className="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-700 rounded-md">
+                  Total Pages: {totalPages}
+                </span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSplitOption('all')}
+                  className={`p-3 text-sm font-bold rounded-lg border-2 transition-all ${splitOption === 'all' ? 'border-blue-600 bg-white text-blue-600' : 'border-gray-200 bg-gray-50 text-gray-500'}`}
+                >
+                  Split All Pages
+                  <span className="block text-[10px] font-normal opacity-70">Downloads each page separately</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSplitOption('range')}
+                  className={`p-3 text-sm font-bold rounded-lg border-2 transition-all ${splitOption === 'range' ? 'border-blue-600 bg-white text-blue-600' : 'border-gray-200 bg-gray-50 text-gray-500'}`}
+                >
+                  Custom Range
+                  <span className="block text-[10px] font-normal opacity-70">Extract specific pages</span>
+                </button>
+              </div>
+
+              {splitOption === 'range' && (
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-blue-800">Page Range (e.g., 1, 3, 5-10)</label>
+                  <input
+                    type="text"
+                    value={splitRange}
+                    onChange={(e) => setSplitRange(e.target.value)}
+                    placeholder="Enter range..."
+                    className="w-full p-3 bg-white border border-blue-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="pt-4">
             <button
               onClick={mode === 'merge' ? mergePdfs : mode === 'split' ? splitPdf : imgToPdf}
@@ -201,7 +302,7 @@ export default function PdfTools() {
               ) : (
                 <>
                   <Download className="w-5 h-5" />
-                  {mode === 'merge' ? 'Merge PDFs' : mode === 'split' ? 'Extract First Page' : 'Convert to PDF'}
+                  {mode === 'merge' ? 'Merge PDFs' : mode === 'split' ? (splitOption === 'all' ? 'Split into Pages' : 'Extract Range') : 'Convert to PDF'}
                 </>
               )}
             </button>
