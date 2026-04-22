@@ -72,33 +72,33 @@ export default function AudioExtractor() {
   return (
     <div className="max-w-3xl mx-auto space-y-8">
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-gray-900">Audio Extractor</h2>
-        <p className="text-gray-500">Extract high-quality MP3 audio from any video file locally.</p>
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Audio Extractor</h2>
+        <p className="text-gray-500 dark:text-gray-400">Extract high-quality MP3 audio from any video file locally.</p>
       </div>
 
-      <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 space-y-6">
+      <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 space-y-6">
         {!videoFile ? (
-          <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+          <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 dark:border-gray-700 border-dashed rounded-xl cursor-pointer bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
             <div className="flex flex-col items-center justify-center pt-5 pb-6">
-              <Video className="w-12 h-12 text-gray-400 mb-4" />
-              <p className="mb-2 text-sm text-gray-500 font-semibold">Click to upload video</p>
-              <p className="text-xs text-gray-400">MP4, MOV, AVI, MKV (Max 500MB recommended)</p>
+              <Video className="w-12 h-12 text-gray-400 dark:text-gray-500 mb-4" />
+              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400 font-semibold">Click to upload video</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">MP4, MOV, AVI, MKV (Max 500MB recommended)</p>
             </div>
             <input type="file" className="hidden" accept="video/*" onChange={handleFileChange} disabled={processing} />
           </label>
         ) : (
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border border-blue-100">
+            <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-900/30">
               <div className="flex items-center gap-3">
-                <Video className="w-6 h-6 text-blue-600" />
+                <Video className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 <div>
-                  <p className="text-sm font-bold text-gray-900 truncate max-w-[200px]">{videoFile.name}</p>
-                  <p className="text-xs text-gray-500">{(videoFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="text-sm font-bold text-gray-900 dark:text-white truncate max-w-[200px]">{videoFile.name}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{(videoFile.size / 1024 / 1024).toFixed(2)} MB</p>
                 </div>
               </div>
               <button 
                 onClick={() => { setVideoFile(null); setAudioUrl(null); }}
-                className="text-xs font-bold text-red-600 hover:text-red-700"
+                className="text-xs font-bold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
                 disabled={processing}
               >
                 Change Video
@@ -128,8 +128,8 @@ export default function AudioExtractor() {
         )}
 
         {audioUrl && (
-          <div className="p-6 bg-green-50 rounded-xl border border-green-100 space-y-4">
-            <div className="flex items-center gap-2 text-green-800 font-bold">
+          <div className="p-6 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-900/30 space-y-4">
+            <div className="flex items-center gap-2 text-green-800 dark:text-green-400 font-bold">
               <CheckCircle2 className="w-5 h-5" />
               Audio Extracted Successfully
             </div>
@@ -146,21 +146,21 @@ export default function AudioExtractor() {
         )}
 
         {error && (
-          <div className="p-4 bg-red-50 border border-red-100 rounded-xl flex items-center gap-3 text-red-700 text-sm">
+          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-xl flex items-center gap-3 text-red-700 dark:text-red-400 text-sm">
             <AlertCircle className="w-5 h-5 shrink-0" />
             {error}
           </div>
         )}
 
         {!loaded && !error && (
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400">
             <RefreshCw className="w-4 h-4 animate-spin" />
             Initializing audio engine...
           </div>
         )}
       </div>
 
-      <div className="bg-gray-900 p-8 rounded-2xl text-white space-y-6">
+      <div className="bg-gray-900 dark:bg-black p-8 rounded-2xl text-white shadow-xl space-y-6">
         <h3 className="text-xl font-bold flex items-center gap-2">
           <FileAudio className="w-6 h-6 text-blue-400" />
           Why use BitBrainTech Audio Extractor?
@@ -168,19 +168,19 @@ export default function AudioExtractor() {
         <div className="grid md:grid-cols-2 gap-6 text-sm text-gray-400">
           <div className="space-y-2">
             <h4 className="text-white font-semibold">Privacy First</h4>
-            <p>Your video never leaves your browser. Extraction happens locally on your CPU.</p>
+            <p className="dark:text-gray-500">Your video never leaves your browser. Extraction happens locally on your CPU.</p>
           </div>
           <div className="space-y-2">
             <h4 className="text-white font-semibold">High Quality</h4>
-            <p>We extract audio at 192kbps constant bitrate for the best listening experience.</p>
+            <p className="dark:text-gray-500">We extract audio at 192kbps constant bitrate for the best listening experience.</p>
           </div>
           <div className="space-y-2 flash-card">
             <h4 className="text-white font-semibold">Universal Support</h4>
-            <p>Supports MP4, MOV, AVI, and most common video formats.</p>
+            <p className="dark:text-gray-500">Supports MP4, MOV, AVI, and most common video formats.</p>
           </div>
           <div className="space-y-2">
             <h4 className="text-white font-semibold">No Watermarks</h4>
-            <p>Completely free to use with no hidden costs or watermarks on your files.</p>
+            <p className="dark:text-gray-500">Completely free to use with no hidden costs or watermarks on your files.</p>
           </div>
         </div>
       </div>

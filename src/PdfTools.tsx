@@ -177,34 +177,34 @@ export default function PdfTools() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-gray-900">PDF Toolkit</h2>
-        <p className="text-gray-500">Secure, browser-based PDF processing. No files ever leave your device.</p>
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">PDF Toolkit</h2>
+        <p className="text-gray-500 dark:text-gray-400">Secure, browser-based PDF processing. No files ever leave your device.</p>
       </div>
 
-      <div className="flex justify-center gap-2 p-1 bg-gray-100 rounded-xl w-fit mx-auto">
+      <div className="flex justify-center gap-2 p-1 bg-gray-100 dark:bg-gray-800 rounded-xl w-fit mx-auto">
         <button 
           onClick={() => { setMode('merge'); setFiles([]); }}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'merge' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'merge' ? 'bg-white dark:bg-gray-700 shadow-sm text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'}`}
         >
           <Plus className="w-4 h-4 inline-block mr-1" /> Merge
         </button>
         <button 
           onClick={() => { setMode('split'); setFiles([]); }}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'split' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'split' ? 'bg-white dark:bg-gray-700 shadow-sm text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'}`}
         >
           <Scissors className="w-4 h-4 inline-block mr-1" /> Split
         </button>
         <button 
           onClick={() => { setMode('img2pdf'); setFiles([]); }}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'img2pdf' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'img2pdf' ? 'bg-white dark:bg-gray-700 shadow-sm text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'}`}
         >
           <ImageIcon className="w-4 h-4 inline-block mr-1" /> Image to PDF
         </button>
       </div>
 
-      <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
+      <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800">
         <div className="space-y-6">
-          <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-8 bg-gray-50 hover:bg-gray-100 transition-colors relative">
+          <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative">
             <input 
               type="file" 
               multiple={mode !== 'split'} 
@@ -213,22 +213,22 @@ export default function PdfTools() {
               className="absolute inset-0 opacity-0 cursor-pointer"
               disabled={processing}
             />
-            <FileText className="w-12 h-12 text-gray-400 mb-4" />
-            <p className="text-gray-600 font-medium">
+            <FileText className="w-12 h-12 text-gray-400 dark:text-gray-500 mb-4" />
+            <p className="text-gray-600 dark:text-gray-300 font-medium">
               {mode === 'img2pdf' ? 'Select Images (PNG/JPG)' : 'Select PDF Files'}
             </p>
-            <p className="text-xs text-gray-500 mt-1">or drag and drop them here</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">or drag and drop them here</p>
           </div>
 
           {files.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Selected Files</h3>
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Selected Files</h3>
               <div className="grid gap-2">
                 {files.map((file, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
+                  <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 overflow-hidden">
                       <FileText className="w-4 h-4 text-blue-500 shrink-0" />
-                      <span className="text-sm text-gray-700 truncate">{file.name}</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-200 truncate">{file.name}</span>
                       <span className="text-xs text-gray-400">({(file.size / 1024 / 1024).toFixed(2)} MB)</span>
                     </div>
                     <button 
@@ -244,10 +244,10 @@ export default function PdfTools() {
           )}
 
           {files.length > 0 && mode === 'split' && (
-            <div className="p-6 bg-blue-50/50 rounded-xl border border-blue-100 space-y-4">
+            <div className="p-6 bg-blue-50/50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-900/30 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-blue-900 uppercase tracking-wider">Split Options</h3>
-                <span className="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-700 rounded-md">
+                <h3 className="text-sm font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wider">Split Options</h3>
+                <span className="text-xs font-bold px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-md">
                   Total Pages: {totalPages}
                 </span>
               </div>
@@ -256,7 +256,7 @@ export default function PdfTools() {
                 <button
                   type="button"
                   onClick={() => setSplitOption('all')}
-                  className={`p-3 text-sm font-bold rounded-lg border-2 transition-all ${splitOption === 'all' ? 'border-blue-600 bg-white text-blue-600' : 'border-gray-200 bg-gray-50 text-gray-500'}`}
+                  className={`p-3 text-sm font-bold rounded-lg border-2 transition-all ${splitOption === 'all' ? 'border-blue-600 bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400'}`}
                 >
                   Split All Pages
                   <span className="block text-[10px] font-normal opacity-70">Downloads each page separately</span>
@@ -264,7 +264,7 @@ export default function PdfTools() {
                 <button
                   type="button"
                   onClick={() => setSplitOption('range')}
-                  className={`p-3 text-sm font-bold rounded-lg border-2 transition-all ${splitOption === 'range' ? 'border-blue-600 bg-white text-blue-600' : 'border-gray-200 bg-gray-50 text-gray-500'}`}
+                  className={`p-3 text-sm font-bold rounded-lg border-2 transition-all ${splitOption === 'range' ? 'border-blue-600 bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400'}`}
                 >
                   Custom Range
                   <span className="block text-[10px] font-normal opacity-70">Extract specific pages</span>
@@ -273,13 +273,13 @@ export default function PdfTools() {
 
               {splitOption === 'range' && (
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-blue-800">Page Range (e.g., 1, 3, 5-10)</label>
+                  <label className="text-xs font-bold text-blue-800 dark:text-blue-300">Page Range (e.g., 1, 3, 5-10)</label>
                   <input
                     type="text"
                     value={splitRange}
                     onChange={(e) => setSplitRange(e.target.value)}
                     placeholder="Enter range..."
-                    className="w-full p-3 bg-white border border-blue-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-3 bg-white dark:bg-gray-800 border border-blue-200 dark:border-gray-700 rounded-lg text-sm outline-none text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               )}
@@ -309,14 +309,14 @@ export default function PdfTools() {
           </div>
 
           {error && (
-            <div className="p-4 bg-red-50 border border-red-100 rounded-xl flex items-center gap-3 text-red-700 text-sm">
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-xl flex items-center gap-3 text-red-700 dark:text-red-400 text-sm">
               <AlertCircle className="w-5 h-5 shrink-0" />
               {error}
             </div>
           )}
 
           {success && (
-            <div className="p-4 bg-green-50 border border-green-100 rounded-xl flex items-center gap-3 text-green-700 text-sm">
+            <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900/30 rounded-xl flex items-center gap-3 text-green-700 dark:text-green-400 text-sm">
               <CheckCircle2 className="w-5 h-5 shrink-0" />
               {success}
             </div>
@@ -325,17 +325,17 @@ export default function PdfTools() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-          <h4 className="font-bold text-gray-900 mb-2">100% Private</h4>
-          <p className="text-sm text-gray-500">Files are processed locally in your browser. We never see your data.</p>
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
+          <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2">100% Private</h4>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Files are processed locally in your browser. We never see your data.</p>
         </div>
-        <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-          <h4 className="font-bold text-gray-900 mb-2">Fast & Free</h4>
-          <p className="text-sm text-gray-500">No wait times, no subscriptions, no watermarks. Just pure utility.</p>
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
+          <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2">Fast & Free</h4>
+          <p className="text-sm text-gray-500 dark:text-gray-400">No wait times, no subscriptions, no watermarks. Just pure utility.</p>
         </div>
-        <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-          <h4 className="font-bold text-gray-900 mb-2">No Limits</h4>
-          <p className="text-sm text-gray-500">Process as many files as you want. Your hardware is the only limit.</p>
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
+          <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2">No Limits</h4>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Process as many files as you want. Your hardware is the only limit.</p>
         </div>
       </div>
     </div>

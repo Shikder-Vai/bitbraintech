@@ -525,10 +525,10 @@ export default function ImageBackgroundRemover() {
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
           <Wand2 className="w-3 h-3" /> AI Powered
         </div>
-        <h1 className="text-4xl md:text-6xl font-black tracking-tight text-gray-900 leading-tight">
+        <h1 className="text-4xl md:text-6xl font-black tracking-tight text-gray-900 dark:text-white leading-tight">
           Professional AI <span className="text-blue-600">Background Remover</span>
         </h1>
-        <p className="text-lg text-gray-500 max-w-2xl mx-auto font-medium">
+        <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto font-medium">
           Remove backgrounds with professional precision using advanced AI. 
           100% private, runs entirely in your browser.
         </p>
@@ -544,18 +544,18 @@ export default function ImageBackgroundRemover() {
         >
           <div className="grid md:grid-cols-2 gap-8">
             {/* Input Card */}
-            <div className="bg-white rounded-[32px] p-8 shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col h-full">
+            <div className="bg-white dark:bg-gray-900 rounded-[32px] p-8 shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-800 flex flex-col h-full">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold flex items-center gap-2 text-gray-800">
-                  <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                    <ImageIcon className="w-4 h-4 text-blue-600" />
+                <h2 className="text-xl font-bold flex items-center gap-2 text-gray-800 dark:text-gray-200">
+                  <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                    <ImageIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   </div>
                   Source Image
                 </h2>
                 {selectedImage && (
                   <button 
                     onClick={handleReset}
-                    className="p-2 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-xl transition-colors"
+                    className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-500 rounded-xl transition-colors"
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>
@@ -564,21 +564,21 @@ export default function ImageBackgroundRemover() {
 
               <div className="flex-1">
                 {!selectedImage ? (
-                  <label className="group relative flex flex-col items-center justify-center w-full h-[400px] border-2 border-dashed border-gray-200 rounded-[24px] cursor-pointer bg-gray-50/50 hover:bg-blue-50/30 hover:border-blue-300 transition-all duration-300">
+                  <label className="group relative flex flex-col items-center justify-center w-full h-[400px] border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-[24px] cursor-pointer bg-gray-50/50 dark:bg-gray-800/50 hover:bg-blue-50/30 dark:hover:bg-blue-900/20 hover:border-blue-300 transition-all duration-300">
                     <div className="flex flex-col items-center text-center px-6">
-                      <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-md shadow-gray-200/50 group-hover:scale-110 transition-transform duration-500">
+                      <div className="w-20 h-20 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mb-6 shadow-md shadow-gray-200/50 dark:shadow-none group-hover:scale-110 transition-transform duration-500">
                         <Upload className="w-8 h-8 text-blue-500" />
                       </div>
-                      <h3 className="text-lg font-bold text-gray-800 mb-2">Drop your image here</h3>
-                      <p className="text-sm text-gray-500 font-medium">PNG, JPG or WebP up to 15MB</p>
-                      <div className="mt-8 px-6 py-3 bg-white border border-gray-200 rounded-2xl text-sm font-bold text-gray-700 shadow-sm group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all">
+                      <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">Drop your image here</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">PNG, JPG or WebP up to 15MB</p>
+                      <div className="mt-8 px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-sm font-bold text-gray-700 dark:text-gray-300 shadow-sm group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all">
                         Browse Files
                       </div>
                     </div>
                     <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
                   </label>
                 ) : (
-                  <div className="h-[400px] bg-gray-50 rounded-[24px] overflow-hidden relative border border-gray-100">
+                  <div className="h-[400px] bg-gray-50 dark:bg-gray-800/50 rounded-[24px] overflow-hidden relative border border-gray-100 dark:border-gray-800">
                     <img 
                       src={previewUrl!} 
                       alt="Preview" 
@@ -597,7 +597,7 @@ export default function ImageBackgroundRemover() {
                 <button
                   onClick={removeBackground}
                   disabled={processing || isModelLoading || !isLibraryLoaded}
-                  className="mt-6 w-full py-5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white rounded-[20px] font-bold text-lg flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-200"
+                  className="mt-6 w-full py-5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white rounded-[20px] font-bold text-lg flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-200 dark:shadow-none"
                 >
                   {processing ? (
                     <>
@@ -614,9 +614,9 @@ export default function ImageBackgroundRemover() {
               )}
 
               {isModelLoading && (
-                <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-2xl flex items-center gap-3 animate-pulse">
+                <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl flex items-center gap-3 animate-pulse">
                   <div className="w-2 h-2 bg-blue-600 rounded-full" />
-                  <p className="text-xs font-bold text-blue-700">
+                  <p className="text-xs font-bold text-blue-700 dark:text-blue-400">
                     Warming up AI Engine...
                   </p>
                 </div>
@@ -624,20 +624,20 @@ export default function ImageBackgroundRemover() {
             </div>
 
             {/* Result Card */}
-            <div className="bg-white rounded-[32px] p-8 shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col h-full relative overflow-hidden">
+            <div className="bg-white dark:bg-gray-900 rounded-[32px] p-8 shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-800 flex flex-col h-full relative overflow-hidden">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold flex items-center gap-2 text-gray-800">
-                  <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
-                    <Wand2 className="w-4 h-4 text-purple-600" />
+                <h2 className="text-xl font-bold flex items-center gap-2 text-gray-800 dark:text-gray-200">
+                  <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                    <Wand2 className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                   </div>
                   Processed Result
                 </h2>
               </div>
 
               <div className="flex-1">
-                <div className="h-[400px] bg-gray-50 rounded-[24px] overflow-hidden relative border border-gray-100 flex items-center justify-center">
+                <div className="h-[400px] bg-gray-50 dark:bg-gray-800/50 rounded-[24px] overflow-hidden relative border border-gray-100 dark:border-gray-800 flex items-center justify-center">
                   {processing && (
-                    <div className="absolute inset-0 z-30 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center">
+                    <div className="absolute inset-0 z-30 bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center">
                       <div className="relative w-24 h-24 mb-6">
                         <svg className="w-full h-full -rotate-90">
                           <circle
@@ -647,7 +647,7 @@ export default function ImageBackgroundRemover() {
                             stroke="currentColor"
                             strokeWidth="8"
                             fill="transparent"
-                            className="text-gray-200"
+                            className="text-gray-200 dark:text-gray-700"
                           />
                           <circle
                             cx="48"
@@ -666,8 +666,8 @@ export default function ImageBackgroundRemover() {
                           {progress}%
                         </div>
                       </div>
-                      <h4 className="text-lg font-black text-gray-900 mb-1">{processingStatus}</h4>
-                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest animate-pulse">Running Neural Network</p>
+                      <h4 className="text-lg font-black text-gray-900 dark:text-white mb-1">{processingStatus}</h4>
+                      <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest animate-pulse">Running Neural Network</p>
                     </div>
                   )}
 
@@ -685,10 +685,10 @@ export default function ImageBackgroundRemover() {
                     </div>
                   ) : (
                     <div className="flex flex-col items-center text-center px-12 opacity-30">
-                      <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                        <Loader2 className="w-8 h-8 text-gray-400" />
+                      <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6">
+                        <Loader2 className="w-8 h-8 text-gray-400 dark:text-gray-500" />
                       </div>
-                      <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Awaiting Neural Process</p>
+                      <p className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Awaiting Neural Process</p>
                     </div>
                   )}
                 </div>
@@ -699,20 +699,20 @@ export default function ImageBackgroundRemover() {
                   <div className="grid grid-cols-2 gap-4">
                     <button 
                       onClick={downloadResult}
-                      className="py-4 bg-gray-900 hover:bg-black text-white rounded-[20px] font-bold flex items-center justify-center gap-2 transition-all shadow-xl shadow-gray-200"
+                      className="py-4 bg-gray-900 hover:bg-black dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-[20px] font-bold flex items-center justify-center gap-2 transition-all shadow-xl shadow-gray-200 dark:shadow-none"
                     >
                       <Download className="w-5 h-5" /> Download
                     </button>
                     <button 
                       onClick={startEditing}
-                      className="py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-[20px] font-bold flex items-center justify-center gap-2 transition-all shadow-xl shadow-purple-200"
+                      className="py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-[20px] font-bold flex items-center justify-center gap-2 transition-all shadow-xl shadow-purple-200 dark:shadow-none"
                     >
                       <Paintbrush className="w-5 h-5" /> Refine
                     </button>
                   </div>
                   <button 
                     onClick={handleReset}
-                    className="w-full py-4 bg-white border-2 border-gray-100 hover:border-gray-300 text-gray-600 rounded-[20px] font-bold flex items-center justify-center gap-2 transition-all"
+                    className="w-full py-4 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 text-gray-600 dark:text-gray-400 rounded-[20px] font-bold flex items-center justify-center gap-2 transition-all"
                   >
                     <RefreshCw className="w-5 h-5" /> Start Over
                   </button>
@@ -742,12 +742,12 @@ export default function ImageBackgroundRemover() {
           { title: "Browser Native", desc: "Runs 100% locally. Your data never touches a server.", icon: Check, color: "green" },
           { title: "Manual Control", desc: "Touch up with professional brush tools and multi-layer masking.", icon: Paintbrush, color: "purple" }
         ].map((f, i) => (
-          <div key={i} className="group p-8 bg-white border border-gray-100 rounded-[32px] hover:border-blue-100 transition-colors shadow-sm">
-            <div className={`w-12 h-12 rounded-2xl bg-${f.color}-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-              <f.icon className={`w-6 h-6 text-${f.color}-600`} />
+          <div key={i} className="group p-8 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-[32px] hover:border-blue-100 dark:hover:border-blue-900/30 transition-colors shadow-sm">
+            <div className={`w-12 h-12 rounded-2xl bg-${f.color}-50 dark:bg-${f.color}-900/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+              <f.icon className={`w-6 h-6 text-${f.color}-600 dark:text-${f.color}-400`} />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">{f.title}</h3>
-            <p className="text-sm text-gray-500 font-medium leading-relaxed">{f.desc}</p>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{f.title}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium leading-relaxed">{f.desc}</p>
           </div>
         ))}
       </motion.div>

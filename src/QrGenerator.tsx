@@ -40,23 +40,23 @@ export default function QrGenerator() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+    <div className="max-w-3xl mx-auto bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
       <div className="flex items-center gap-3 mb-6">
-        <QrCode className="w-8 h-8 text-blue-600" />
-        <h2 className="text-2xl font-bold text-gray-900">QR & Barcode Generator</h2>
+        <QrCode className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">QR & Barcode Generator</h2>
       </div>
 
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Enter Text or URL
           </label>
           <div className="relative">
-            <Type className="absolute left-3 top-4 w-5 h-5 text-gray-400" />
+            <Type className="absolute left-3 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" />
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all min-h-[120px] resize-y"
+              className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all min-h-[120px] resize-y"
               placeholder="e.g., https://example.com or 123456789"
             />
           </div>
@@ -66,7 +66,7 @@ export default function QrGenerator() {
           <button
             onClick={() => setType('qr')}
             className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-              type === 'qr' ? 'bg-blue-100 text-blue-700 border-2 border-blue-500' : 'bg-gray-50 text-gray-600 border-2 border-transparent hover:bg-gray-100'
+              type === 'qr' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-2 border-blue-500' : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-700'
             }`}
           >
             QR Code
@@ -74,14 +74,14 @@ export default function QrGenerator() {
           <button
             onClick={() => setType('barcode')}
             className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-              type === 'barcode' ? 'bg-blue-100 text-blue-700 border-2 border-blue-500' : 'bg-gray-50 text-gray-600 border-2 border-transparent hover:bg-gray-100'
+              type === 'barcode' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-2 border-blue-500' : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-700'
             }`}
           >
             Barcode
           </button>
         </div>
 
-        <div className="bg-gray-50 rounded-xl p-8 flex flex-col items-center justify-center min-h-[300px] border border-gray-200">
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-8 flex flex-col items-center justify-center min-h-[300px] border border-gray-200 dark:border-gray-700">
           {text ? (
             <div className="bg-white p-4 rounded-lg shadow-sm">
               {type === 'qr' ? (
@@ -99,7 +99,7 @@ export default function QrGenerator() {
               )}
             </div>
           ) : (
-            <p className="text-gray-400 text-center">Enter some text to generate</p>
+            <p className="text-gray-400 dark:text-gray-500 text-center">Enter some text to generate</p>
           )}
         </div>
 
@@ -114,28 +114,28 @@ export default function QrGenerator() {
       </div>
 
       {/* Optimized SEO Content Block for QR Generator */}
-      <div className="mt-12 bg-white p-8 rounded-xl shadow-sm border border-gray-200 text-gray-600 leading-relaxed">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 text-center">Fast, Private & Free QR Code Generator Online</h2>
+      <div className="mt-12 bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 leading-relaxed">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">Fast, Private & Free QR Code Generator Online</h2>
         
         <div className="grid md:grid-cols-2 gap-8">
           <div>
-            <h3 className="text-md font-semibold text-gray-800 mb-2">Create Custom QR Codes for Any Use</h3>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Create Custom QR Codes for Any Use</h3>
             <p className="text-sm mb-4">
-              Our <strong className="text-gray-800">free QR code generator</strong> is the ultimate tool for creating scannable codes for your website, social media, or business. Whether you need a <strong className="text-gray-800">QR code for URL</strong>, contact information, or a WiFi password, our <strong className="text-gray-800">custom QR code maker</strong> provides high-resolution results instantly. Unlike other tools, we don't track your scans or add annoying watermarks.
+              Our <strong className="text-gray-800 dark:text-gray-100">free QR code generator</strong> is the ultimate tool for creating scannable codes for your website, social media, or business. Whether you need a <strong className="text-gray-800 dark:text-gray-100">QR code for URL</strong>, contact information, or a WiFi password, our <strong className="text-gray-800 dark:text-gray-100">custom QR code maker</strong> provides high-resolution results instantly. Unlike other tools, we don't track your scans or add annoying watermarks.
             </p>
           </div>
           <div>
-            <h3 className="text-md font-semibold text-gray-800 mb-2">Professional Barcode Maker Online</h3>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Professional Barcode Maker Online</h3>
             <p className="text-sm mb-4">
-              Need to <strong className="text-gray-800">create barcode online</strong> for your products or inventory? Our built-in <strong className="text-gray-800">barcode generator free</strong> of charge supports standard formats like CODE128. It's a perfect solution for small businesses looking for a <strong className="text-gray-800">secure barcode maker</strong> that works entirely offline in the browser, ensuring your sensitive data never leaves your device.
+              Need to <strong className="text-gray-800 dark:text-gray-100">create barcode online</strong> for your products or inventory? Our built-in <strong className="text-gray-800 dark:text-gray-100">barcode generator free</strong> of charge supports standard formats like CODE128. It's a perfect solution for small businesses looking for a <strong className="text-gray-800 dark:text-gray-100">secure barcode maker</strong> that works entirely offline in the browser, ensuring your sensitive data never leaves your device.
             </p>
           </div>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-gray-100">
-          <h3 className="text-md font-semibold text-gray-800 mb-2">Why Choose Our Secure QR Generator?</h3>
+        <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
+          <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Why Choose Our Secure QR Generator?</h3>
           <p className="text-sm">
-            Most <strong className="text-gray-800">online QR code generators</strong> store your data on their servers and track your users. BitBrainTech is different. We offer a <strong className="text-gray-800">privacy-first QR code maker</strong> that generates codes locally. This means no server pings, no tracking, and <strong className="text-gray-800">no expiry QR codes</strong>. Use our <strong className="text-gray-800">bulk QR code generator</strong> alternative to create and download your codes as high-quality PNG images for print or digital use.
+            Most <strong className="text-gray-800 dark:text-gray-100">online QR code generators</strong> store your data on their servers and track your users. BitBrainTech is different. We offer a <strong className="text-gray-800 dark:text-gray-100">privacy-first QR code maker</strong> that generates codes locally. This means no server pings, no tracking, and <strong className="text-gray-800 dark:text-gray-100">no expiry QR codes</strong>. Use our <strong className="text-gray-800 dark:text-gray-100">bulk QR code generator</strong> alternative to create and download your codes as high-quality PNG images for print or digital use.
           </p>
         </div>
       </div>

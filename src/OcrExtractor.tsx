@@ -2,11 +2,11 @@ import React, { useState, useRef } from 'react';
 import { createWorker, PSM } from 'tesseract.js';
 import { Document, Packer, Paragraph, TextRun } from 'docx';
 import { saveAs } from 'file-saver';
-import { FileText, Upload, Copy, Check, Loader2, Wand2, Download, Cloud, Cpu } from 'lucide-react';
+import { FileText, Upload, Copy, Check, Loader2, Wand2, Download, Cloud, Cpu, Trash2 } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
 export default function OcrExtractor() {
-  const [image, setImage] = useState<string | null>(null);
+  const [images, setImages] = useState<string[]>([]);
   const [text, setText] = useState<string>('');
   const [progress, setProgress] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -29,17 +29,32 @@ export default function OcrExtractor() {
     { code: 'jpn', name: 'Japanese' },
   ];
 
+  const MAX_IMAGES = 6;
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
+    const uploadedFiles = Array.from(e.target.files || []) as File[];
+    if (uploadedFiles.length === 0) return;
+
+    if (images.length + uploadedFiles.length > MAX_IMAGES) {
+      alert(`You can only upload up to ${MAX_IMAGES} images.`);
+      return;
+    }
+
+    uploadedFiles.forEach(file => {
       const reader = new FileReader();
       reader.onload = () => {
-        setImage(reader.result as string);
+        setImages(prev => [...prev, reader.result as string]);
         setText('');
         setProgress(0);
       };
       reader.readAsDataURL(file);
-    }
+    });
+  };
+
+  const removeImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+    setText('');
+    setProgress(0);
   };
 
   const preprocessImage = (dataUrl: string): Promise<string> => {
@@ -236,63 +251,83 @@ export default function OcrExtractor() {
     }
   };
 
+  const postProcessText = (rawText: string, lang: string): string => {
+    if (lang !== 'eng') return rawText; // Only apply basic fixes for English to avoid breaking other languages
+
+    return rawText
+      .replace(/\|/g, 'I') // Often bar is read as I
+      .replace(/\blo\b/g, '10') // common misread of 10
+      .replace(/([a-zA-Z])0([a-zA-Z])/g, '$1o$2') // 0 instead of o inside words
+      .replace(/([a-zA-Z])1([a-zA-Z])/g, '$1i$2') // 1 instead of i inside words
+      .replace(/([a-zA-Z])5([a-zA-Z])/g, '$1s$2') // 5 instead of s inside words
+      .replace(/([a-zA-Z])2([a-zA-Z])/g, '$1z$2') // 2 instead of z inside words
+      .replace(/([a-zA-Z])8([a-zA-Z])/g, '$1B$2') // 8 instead of B inside words
+      .replace(/\r/g, ''); // Clean carriage returns
+  };
+
   const extractText = async () => {
-    if (!image) return;
+    if (images.length === 0) return;
     
     setIsProcessing(true);
     setText('');
     setProgress(0);
 
+    let fullText = '';
+
     try {
       if (engine === 'cloud') {
-        // Use Gemini AI for handwriting and complex layouts
         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
         
-        // Extract base64 and mimeType from data URL
-        const [prefix, base64Data] = image.split(',');
-        const mimeType = prefix.match(/:(.*?);/)?.[1] || 'image/jpeg';
+        for (let i = 0; i < images.length; i++) {
+          const img = images[i];
+          const [prefix, base64Data] = img.split(',');
+          const mimeType = prefix.match(/:(.*?);/)?.[1] || 'image/jpeg';
 
-        const response = await ai.models.generateContent({
-          model: 'gemini-3-flash-preview',
-          contents: [
-            {
-              parts: [
-                { text: 'Extract all the text from this image exactly as it is written. Preserve the language, line breaks, and formatting. Do not add any markdown formatting like ``` or extra commentary. This may contain handwriting, read it carefully.' },
-                {
-                  inlineData: {
-                    data: base64Data,
-                    mimeType: mimeType
+          const response = await ai.models.generateContent({
+            model: 'gemini-3-flash-preview',
+            contents: [
+              {
+                parts: [
+                  { text: 'Extract all the text from this image exactly as it is written. Preserve the language, line breaks, and formatting. Do not add any markdown formatting like ``` or extra commentary. This may contain handwriting, read it carefully.' },
+                  {
+                    inlineData: {
+                      data: base64Data,
+                      mimeType: mimeType
+                    }
                   }
-                }
-              ]
-            }
-          ]
-        });
+                ]
+              }
+            ]
+          });
+          
+          fullText += (i > 0 ? '\n\n' : '') + (response.text || '');
+          setProgress(Math.round(((i + 1) / images.length) * 100));
+        }
         
-        setText(response.text || '');
-        setProgress(100);
+        setText(fullText);
       } else {
         // Use local Tesseract.js
-        const processedImage = enhance ? await preprocessImage(image) : image;
-
         const worker = await createWorker(language, 1, {
           logger: m => {
             if (m.status === 'recognizing text') {
-              setProgress(Math.round(m.progress * 100));
+              // Note: This logger might be noisy with multiple images, we'll simplify progress
             }
           }
         });
         
-        // For non-English languages, standard page segmentation mode (3) usually works better
-        // than sparse text mode (11) which is better for logos.
         const psm = language === 'eng' ? PSM.SPARSE_TEXT : PSM.AUTO;
+        await worker.setParameters({ tessedit_pageseg_mode: psm });
+
+        for (let i = 0; i < images.length; i++) {
+          const img = images[i];
+          const processedImage = enhance ? await preprocessImage(img) : img;
+          const result = await worker.recognize(processedImage);
+          const processed = postProcessText(result.data.text, language);
+          fullText += (i > 0 ? '\n\n' : '') + processed;
+          setProgress(Math.round(((i + 1) / images.length) * 100));
+        }
         
-        await worker.setParameters({
-          tessedit_pageseg_mode: psm,
-        });
-        
-        const result = await worker.recognize(processedImage);
-        setText(result.data.text);
+        setText(fullText);
         await worker.terminate();
       }
     } catch (error) {
@@ -331,51 +366,66 @@ export default function OcrExtractor() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+    <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
       <div className="flex items-center gap-3 mb-6">
-        <FileText className="w-8 h-8 text-blue-600" />
+        <FileText className="w-8 h-8 text-blue-600 dark:text-blue-400" />
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Image to Text Extractor</h2>
-          <p className="text-gray-500 text-sm mt-1">Extract text from images instantly using local OCR. 100% private.</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Image to Text Extractor</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Extract text from images instantly using local OCR. 100% private.</p>
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
         <div className="space-y-6">
-          <div 
-            onClick={() => fileInputRef.current?.click()}
-            className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 hover:border-blue-500 transition-colors cursor-pointer group"
-          >
-            <input 
-              type="file" 
-              ref={fileInputRef}
-              onChange={handleImageUpload}
-              accept="image/*" 
-              className="hidden" 
-            />
-            {image ? (
-              <img src={image} alt="Preview" className="max-h-64 mx-auto rounded-lg object-contain" />
-            ) : (
+          <div className="space-y-4">
+            <div 
+              onClick={() => fileInputRef.current?.click()}
+              className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 text-center hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-blue-500 dark:hover:border-blue-400 transition-colors cursor-pointer group"
+            >
+              <input 
+                type="file" 
+                ref={fileInputRef}
+                onChange={handleImageUpload}
+                accept="image/*" 
+                multiple
+                className="hidden" 
+              />
               <div className="flex flex-col items-center">
-                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
-                  <Upload className="w-8 h-8 text-blue-600" />
+                <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+                  <Upload className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">Upload Image</h3>
-                <p className="text-sm text-gray-500">PNG, JPG, WEBP up to 10MB</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Upload Images</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Select up to {MAX_IMAGES} images (PNG, JPG, WEBP)</p>
+              </div>
+            </div>
+
+            {images.length > 0 && (
+              <div className="grid grid-cols-3 gap-2">
+                {images.map((img, idx) => (
+                  <div key={idx} className="relative group aspect-square">
+                    <img src={img} alt={`Preview ${idx}`} className="w-full h-full object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                    <button
+                      onClick={(e) => { e.stopPropagation(); removeImage(idx); }}
+                      className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Processing Engine</label>
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Processing Engine</label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setEngine('local')}
                   className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-colors ${
                     engine === 'local' 
-                      ? 'border-blue-600 bg-blue-50 text-blue-700' 
-                      : 'border-gray-200 hover:border-blue-300 text-gray-600'
+                      ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' 
+                      : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-400 text-gray-600 dark:text-gray-400'
                   }`}
                 >
                   <Cpu className="w-6 h-6 mb-1" />
@@ -386,8 +436,8 @@ export default function OcrExtractor() {
                   onClick={() => setEngine('cloud')}
                   className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-colors ${
                     engine === 'cloud' 
-                      ? 'border-purple-600 bg-purple-50 text-purple-700' 
-                      : 'border-gray-200 hover:border-purple-300 text-gray-600'
+                      ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400' 
+                      : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-400 text-gray-600 dark:text-gray-400'
                   }`}
                 >
                   <Cloud className="w-6 h-6 mb-1" />
@@ -400,12 +450,12 @@ export default function OcrExtractor() {
             {engine === 'local' && (
               <>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Select Language</label>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Select Language</label>
                   <select
                     value={language}
                     onChange={(e) => setLanguage(e.target.value)}
                     disabled={isProcessing}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed"
                   >
                     {LANGUAGES.map(lang => (
                       <option key={lang.code} value={lang.code}>{lang.name}</option>
@@ -419,11 +469,11 @@ export default function OcrExtractor() {
                     id="enhance"
                     checked={enhance}
                     onChange={(e) => setEnhance(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 text-blue-600 rounded border-gray-300 dark:border-gray-700 focus:ring-blue-500"
                   />
-                  <label htmlFor="enhance" className="text-sm text-gray-700 flex items-center gap-1 cursor-pointer">
-                    <Wand2 className="w-4 h-4 text-gray-500" />
-                    Advanced Preprocessing (Adaptive Thresholding, De-skewing & Scaling)
+                  <label htmlFor="enhance" className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-1 cursor-pointer">
+                    <Wand2 className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                    Advanced Preprocessing
                   </label>
                 </div>
               </>
@@ -432,7 +482,7 @@ export default function OcrExtractor() {
 
           <button
             onClick={extractText}
-            disabled={!image || isProcessing}
+            disabled={images.length === 0 || isProcessing}
             className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
           >
             {isProcessing ? (
@@ -451,19 +501,19 @@ export default function OcrExtractor() {
 
         <div className="flex flex-col h-full min-h-[400px]">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">Extracted Text</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Extracted Text</label>
             {text && (
               <div className="flex items-center gap-4">
                 <button
                   onClick={downloadWordDoc}
-                  className="text-sm flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-sm flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                 >
                   <Download className="w-4 h-4" />
                   Save as Word
                 </button>
                 <button
                   onClick={copyToClipboard}
-                  className="text-sm flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-sm flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   {copied ? 'Copied!' : 'Copy Text'}
@@ -475,34 +525,34 @@ export default function OcrExtractor() {
             value={text}
             readOnly
             placeholder="Extracted text will appear here..."
-            className="flex-1 w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none bg-gray-50"
+            className="flex-1 w-full p-4 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
           />
         </div>
       </div>
 
       {/* Optimized SEO Content Block for OCR Extractor */}
-      <div className="mt-12 bg-white p-8 rounded-xl shadow-sm border border-gray-200 text-gray-600 leading-relaxed">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 text-center">Highly Accurate Image to Text Converter Online</h2>
+      <div className="mt-12 bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 leading-relaxed">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">Highly Accurate Image to Text Converter Online</h2>
         
         <div className="grid md:grid-cols-2 gap-8">
           <div>
-            <h3 className="text-md font-semibold text-gray-800 mb-2">Free Online OCR Tool for Any Language</h3>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Free Online OCR Tool for Any Language</h3>
             <p className="text-sm mb-4">
-              Our <strong className="text-gray-800">image to text converter</strong> is a powerful <strong className="text-gray-800">free online OCR tool</strong> that supports over 10 languages including English, Bengali, Hindi, and more. Whether you need to <strong className="text-gray-800">extract text from image free</strong> or convert a <strong className="text-gray-800">photo to text scanner</strong> result, our tool provides highly accurate results. It's the perfect <strong className="text-gray-800">jpg to word converter</strong> alternative for digitizing your documents.
+              Our <strong className="text-gray-800 dark:text-gray-100">image to text converter</strong> is a powerful <strong className="text-gray-800 dark:text-gray-100">free online OCR tool</strong> that supports over 10 languages including English, Bengali, Hindi, and more. Whether you need to <strong className="text-gray-800 dark:text-gray-100">extract text from image free</strong> or convert a <strong className="text-gray-800 dark:text-gray-100">photo to text scanner</strong> result, our tool provides highly accurate results. It's the perfect <strong className="text-gray-800 dark:text-gray-100">jpg to word converter</strong> alternative for digitizing your documents.
             </p>
           </div>
           <div>
-            <h3 className="text-md font-semibold text-gray-800 mb-2">Advanced Handwriting to Text Converter</h3>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Advanced Handwriting to Text Converter</h3>
             <p className="text-sm mb-4">
-              Struggling with messy notes? Our <strong className="text-gray-800">handwriting to text converter</strong> uses advanced Cloud AI to read and digitize handwritten documents with ease. For printed text, our <strong className="text-gray-800">local OCR software</strong> runs entirely in your browser, ensuring your sensitive documents are never uploaded to a server. It's a <strong className="text-gray-800">secure image to text</strong> solution for everyone.
+              Struggling with messy notes? Our <strong className="text-gray-800 dark:text-gray-100">handwriting to text converter</strong> uses advanced Cloud AI to read and digitize handwritten documents with ease. For printed text, our <strong className="text-gray-800 dark:text-gray-100">local OCR software</strong> runs entirely in your browser, ensuring your sensitive documents are never uploaded to a server. It's a <strong className="text-gray-800 dark:text-gray-100">secure image to text</strong> solution for everyone.
             </p>
           </div>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-gray-100">
-          <h3 className="text-md font-semibold text-gray-800 mb-2">Why Use Our Picture to Text Converter?</h3>
+        <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
+          <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Why Use Our Picture to Text Converter?</h3>
           <p className="text-sm">
-            BitBrainTech offers a comprehensive <strong className="text-gray-800">picture to text converter</strong> that is fast, free, and private. Use it as a <strong className="text-gray-800">png to text</strong> tool or to <strong className="text-gray-800">scan text from image</strong> instantly. You can easily copy the extracted text or download it as a Word document. With our <strong className="text-gray-800">free OCR online</strong> service, you get professional-grade results without the need for expensive software or subscriptions.
+            BitBrainTech offers a comprehensive <strong className="text-gray-800 dark:text-gray-100">picture to text converter</strong> that is fast, free, and private. Use it as a <strong className="text-gray-800 dark:text-gray-100">png to text</strong> tool or to <strong className="text-gray-800 dark:text-gray-100">scan text from image</strong> instantly. You can easily copy the extracted text or download it as a Word document. With our <strong className="text-gray-800 dark:text-gray-100">free OCR online</strong> service, you get professional-grade results without the need for expensive software or subscriptions.
           </p>
         </div>
       </div>

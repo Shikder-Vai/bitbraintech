@@ -30,7 +30,9 @@ import {
   Youtube,
   Smartphone,
   Facebook,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Moon,
+  Sun
 } from 'lucide-react';
 
 function cn(...classes: (string | undefined | null | false)[]) {
@@ -57,6 +59,26 @@ export default function App() {
   const [outputUrl, setOutputUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return 'light';
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
   // Dynamic SEO Meta Tags
   const path = location.pathname;
@@ -352,7 +374,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 text-gray-900 font-sans">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
       <Helmet>
         <title>{currentSeo.title}</title>
         <meta name="title" content={currentSeo.title} />
@@ -370,80 +392,83 @@ export default function App() {
       </Helmet>
 
       {/* Header */}
-      <header className="bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+      <header className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-200 group-hover:scale-105 transition-transform">
+              <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-200 dark:shadow-none group-hover:scale-105 transition-transform">
                 <ShieldCheck className="text-white w-5 h-5" />
               </div>
-              <span className="font-bold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+              <span className="font-bold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400">
                 BitBrainTech
               </span>
             </Link>
             
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center bg-gray-50/50 p-1 rounded-xl border border-gray-100">
+            <nav className="hidden lg:flex items-center bg-gray-50/50 dark:bg-gray-800/50 p-1 rounded-xl border border-gray-100 dark:border-gray-800">
               <Link 
                 to="/" 
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${location.pathname === '/' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${location.pathname === '/' ? 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-gray-800/50'}`}
               >
                 BG Remover
               </Link>
               <Link 
                 to="/video-editor" 
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${location.pathname === '/video-editor' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${location.pathname === '/video-editor' ? 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-gray-800/50'}`}
               >
                 Video Editor
               </Link>
               
-              <div className="w-px h-4 bg-gray-200 mx-1" />
+              <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-1" />
               
               {/* Dropdown for More Tools */}
               <div className="relative group/menu">
-                <button className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white/50 flex items-center gap-1">
+                <button className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-gray-800/50 flex items-center gap-1">
                   More Tools
                   <Menu className="w-4 h-4" />
                 </button>
-                <div className="absolute top-full right-0 mt-1 w-56 bg-white border border-gray-100 rounded-xl shadow-xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all transform origin-top-right scale-95 group-hover/menu:scale-100 p-1.5">
-                  <Link to="/qr-generator" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    QR Generator
-                  </Link>
-                  <Link to="/image-to-text" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    Image to Text
-                  </Link>
-                  <Link to="/image-upscaler" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    Image Upscaler
-                  </Link>
-                  <Link to="/image-converter" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    Image Converter
-                  </Link>
-                  <Link to="/pdf-tools" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    PDF Tools
-                  </Link>
-                  <Link to="/audio-extractor" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    Audio Extractor
-                  </Link>
+                <div className="absolute top-full right-0 mt-1 w-56 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl shadow-xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all transform origin-top-right scale-95 group-hover/menu:scale-100 p-1.5">
+                  {[
+                    { path: '/qr-generator', label: 'QR Generator' },
+                    { path: '/image-to-text', label: 'Image to Text' },
+                    { path: '/image-upscaler', label: 'Image Upscaler' },
+                    { path: '/image-converter', label: 'Image Converter' },
+                    { path: '/pdf-tools', label: 'PDF Tools' },
+                    { path: '/audio-extractor', label: 'Audio Extractor' }
+                  ].map((item) => (
+                    <Link key={item.path} to={item.path} className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                      {item.label}
+                    </Link>
+                  ))}
                 </div>
               </div>
             </nav>
 
             <div className="flex items-center gap-3">
+              {/* Theme Toggle */}
+              <button 
+                onClick={toggleTheme}
+                className="p-2 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                aria-label="Toggle theme"
+              >
+                {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+              </button>
+
               {/* Engine Status */}
               <div className="hidden md:block">
                 {ffmpegLoaded ? (
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full border border-green-100 text-xs font-semibold">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-full border border-green-100 dark:border-green-900/30 text-xs font-semibold">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     Engine Ready
                   </div>
                 ) : isFfmpegLoading ? (
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full border border-blue-100 text-xs font-semibold">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-full border border-blue-100 dark:border-blue-900/30 text-xs font-semibold">
                     <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                     Initializing...
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-500 rounded-full border border-gray-100 text-xs font-medium">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-full border border-gray-100 dark:border-gray-700 text-xs font-medium">
                     <RefreshCw className="w-3.5 h-3.5" />
                     Standby
                   </div>
@@ -451,7 +476,7 @@ export default function App() {
               </div>
               
               <button 
-                className="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors"
+                className="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
                 {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -462,63 +487,26 @@ export default function App() {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <nav className="lg:hidden bg-white border-t border-gray-100 px-4 py-4 flex flex-col gap-2 text-sm font-medium text-gray-600 shadow-xl absolute w-full left-0">
-            <Link 
-              to="/" 
-              onClick={() => setIsMobileMenuOpen(false)} 
-              className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === '/' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              BG Remover
-            </Link>
-            <Link 
-              to="/video-editor" 
-              onClick={() => setIsMobileMenuOpen(false)} 
-              className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === '/video-editor' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              Video Editor
-            </Link>
-            <Link 
-              to="/qr-generator" 
-              onClick={() => setIsMobileMenuOpen(false)} 
-              className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === '/qr-generator' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              QR Generator
-            </Link>
-            <Link 
-              to="/image-to-text" 
-              onClick={() => setIsMobileMenuOpen(false)} 
-              className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === '/image-to-text' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              Image to Text
-            </Link>
-            <Link 
-              to="/image-upscaler" 
-              onClick={() => setIsMobileMenuOpen(false)} 
-              className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === '/image-upscaler' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              Image Upscaler
-            </Link>
-            <Link 
-              to="/image-converter" 
-              onClick={() => setIsMobileMenuOpen(false)} 
-              className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === '/image-converter' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              Image Converter
-            </Link>
-            <Link 
-              to="/pdf-tools" 
-              onClick={() => setIsMobileMenuOpen(false)} 
-              className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === '/pdf-tools' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              PDF Tools
-            </Link>
-            <Link 
-              to="/audio-extractor" 
-              onClick={() => setIsMobileMenuOpen(false)} 
-              className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === '/audio-extractor' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-            >
-              Audio Extractor
-            </Link>
+          <nav className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 px-4 py-4 flex flex-col gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 shadow-xl absolute w-full left-0 z-50">
+            {[
+              { path: '/', label: 'BG Remover' },
+              { path: '/video-editor', label: 'Video Editor' },
+              { path: '/qr-generator', label: 'QR Generator' },
+              { path: '/image-to-text', label: 'Image to Text' },
+              { path: '/image-upscaler', label: 'Image Upscaler' },
+              { path: '/image-converter', label: 'Image Converter' },
+              { path: '/pdf-tools', label: 'PDF Tools' },
+              { path: '/audio-extractor', label: 'Audio Extractor' }
+            ].map((item) => (
+              <Link 
+                key={item.path}
+                to={item.path}
+                onClick={() => setIsMobileMenuOpen(false)} 
+                className={`text-left transition-colors px-4 py-3 rounded-xl ${location.pathname === item.path ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'}`}
+              >
+                {item.label}
+              </Link>
+            ))}
           </nav>
         )}
       </header>
@@ -531,17 +519,17 @@ export default function App() {
             <div className="grid md:grid-cols-2 gap-8">
               {/* Left Column: Upload & Preview */}
               <div className="space-y-6">
-            <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <Video className="w-5 h-5 text-gray-500" /> Video Input
+            <section className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 dark:text-white">
+                <Video className="w-5 h-5 text-gray-500 dark:text-gray-400" /> Video Input
               </h2>
               
               {!videoFile ? (
-                <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 dark:border-gray-700 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <Upload className="w-8 h-8 text-gray-400 mb-3" />
-                    <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                    <p className="text-xs text-gray-500">MP4, MOV, AVI (Max 500MB recommended)</p>
+                    <Upload className="w-8 h-8 text-gray-400 dark:text-gray-500 mb-3" />
+                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">MP4, MOV, AVI (Max 500MB recommended)</p>
                   </div>
                   <input type="file" className="hidden" accept="video/*" onChange={handleFileChange} disabled={processing} />
                 </label>
@@ -556,12 +544,12 @@ export default function App() {
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-700 truncate max-w-[200px]" title={videoFile.name}>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate max-w-[200px]" title={videoFile.name}>
                       {videoFile.name}
                     </span>
                     <button 
                       onClick={() => { setVideoFile(null); setOutputUrl(null); }}
-                      className="text-sm text-red-600 hover:text-red-700 font-medium"
+                      className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium"
                       disabled={processing}
                     >
                       Remove
@@ -592,48 +580,48 @@ export default function App() {
 
           {/* Right Column: Options & Output */}
           <div className="space-y-6">
-            <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <Settings className="w-5 h-5 text-gray-500" /> Transformation Settings
+            <section className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 dark:text-white">
+                <Settings className="w-5 h-5 text-gray-500 dark:text-gray-400" /> Transformation Settings
               </h2>
               
               <div className="space-y-5">
                 {/* Toggles */}
                 <div className="flex items-center justify-between">
                   <div>
-                    <label className="font-medium text-gray-900">Mirror Video</label>
-                    <p className="text-xs text-gray-500">Flips the video horizontally</p>
+                    <label className="font-medium text-gray-900 dark:text-gray-200">Mirror Video</label>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">Flips the video horizontally</p>
                   </div>
                   <input 
                     type="checkbox" 
                     checked={options.mirror}
                     onChange={(e) => setOptions({...options, mirror: e.target.checked})}
                     disabled={processing}
-                    className="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    className="w-5 h-5 text-blue-600 rounded border-gray-300 dark:border-gray-700 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <label className="font-medium text-gray-900">Safety Border</label>
-                    <p className="text-xs text-gray-500">Adds a slight black border</p>
+                    <label className="font-medium text-gray-900 dark:text-gray-200">Safety Border</label>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">Adds a slight black border</p>
                   </div>
                   <input 
                     type="checkbox" 
                     checked={options.addBorder}
                     onChange={(e) => setOptions({...options, addBorder: e.target.checked})}
                     disabled={processing}
-                    className="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    className="w-5 h-5 text-blue-600 rounded border-gray-300 dark:border-gray-700 focus:ring-blue-500"
                   />
                 </div>
 
-                <hr className="border-gray-100" />
+                <hr className="border-gray-100 dark:border-gray-800" />
 
                 {/* Sliders */}
                 <div>
                   <div className="flex justify-between mb-1">
-                    <label className="font-medium text-gray-900">Playback Speed</label>
-                    <span className="text-sm text-gray-500">{options.speed.toFixed(2)}x</span>
+                    <label className="font-medium text-gray-900 dark:text-gray-200">Playback Speed</label>
+                    <span className="text-sm text-gray-500 dark:text-gray-500">{options.speed.toFixed(2)}x</span>
                   </div>
                   <input 
                     type="range" 
@@ -641,14 +629,14 @@ export default function App() {
                     value={options.speed}
                     onChange={(e) => setOptions({...options, speed: parseFloat(e.target.value)})}
                     disabled={processing}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                    className="w-full h-2 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-blue-600"
                   />
                 </div>
 
                 <div>
                   <div className="flex justify-between mb-1">
-                    <label className="font-medium text-gray-900">Audio Pitch</label>
-                    <span className="text-sm text-gray-500">{options.pitch.toFixed(2)}x</span>
+                    <label className="font-medium text-gray-900 dark:text-gray-200">Audio Pitch</label>
+                    <span className="text-sm text-gray-500 dark:text-gray-500">{options.pitch.toFixed(2)}x</span>
                   </div>
                   <input 
                     type="range" 
@@ -656,20 +644,20 @@ export default function App() {
                     value={options.pitch}
                     onChange={(e) => setOptions({...options, pitch: parseFloat(e.target.value)})}
                     disabled={processing}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                    className="w-full h-2 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-blue-600"
                   />
                 </div>
 
-                <hr className="border-gray-100" />
+                <hr className="border-gray-100 dark:border-gray-800" />
 
                 {/* Select */}
                 <div>
-                  <label className="block font-medium text-gray-900 mb-1">Color Filter</label>
+                  <label className="block font-medium text-gray-900 dark:text-gray-200 mb-1">Color Filter</label>
                   <select 
                     value={options.colorFilter}
                     onChange={(e) => setOptions({...options, colorFilter: e.target.value as any})}
                     disabled={processing}
-                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                    className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                   >
                     <option value="none">None (Original)</option>
                     <option value="vibrant">Vibrant (High Saturation)</option>
@@ -715,8 +703,8 @@ export default function App() {
 
             {/* Output Section */}
             {outputUrl && (
-              <section className="bg-white p-6 rounded-xl shadow-sm border border-green-200 bg-green-50/30">
-                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-green-800">
+              <section className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-green-200 dark:border-green-900/30 bg-green-50/30 dark:bg-green-900/10">
+                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-green-800 dark:text-green-400">
                   <CheckCircle2 className="w-5 h-5" /> Transformation Complete
                 </h2>
                 <div className="aspect-video bg-black rounded-lg overflow-hidden relative mb-4">
@@ -740,28 +728,28 @@ export default function App() {
         </div>
 
         {/* Optimized SEO Content Block for Home Page */}
-        <div className="mt-12 bg-white p-8 rounded-xl shadow-sm border border-gray-200 text-gray-600 leading-relaxed">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 text-center">Advanced Video Metadata & Digital Footprint Editor</h2>
+        <div className="mt-12 bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 leading-relaxed">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">Advanced Video Metadata & Digital Footprint Editor</h2>
           
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-md font-semibold text-gray-800 mb-2">Bypass Automated Copyright Detection</h3>
+              <h3 className="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Bypass Automated Copyright Detection</h3>
               <p className="text-sm mb-4">
-                Are you looking for a way to <strong className="text-gray-800">bypass copyright on YouTube</strong> or <strong className="text-gray-800">avoid copyright strikes on TikTok</strong>? BitBrainTech is a specialized <strong className="text-gray-800">video uniqueifier</strong> that uses advanced browser-based processing to <strong className="text-gray-800">alter video digital footprints</strong>. By applying subtle transformations like mirroring, speed adjustment, and color grading, our tool ensures your content is perceived as unique by automated Content ID systems.
+                Are you looking for a way to <strong className="text-gray-800 dark:text-gray-200">bypass copyright on YouTube</strong> or <strong className="text-gray-800 dark:text-gray-200">avoid copyright strikes on TikTok</strong>? BitBrainTech is a specialized <strong className="text-gray-800 dark:text-gray-200">video uniqueifier</strong> that uses advanced browser-based processing to <strong className="text-gray-800 dark:text-gray-200">alter video digital footprints</strong>. By applying subtle transformations like mirroring, speed adjustment, and color grading, our tool ensures your content is perceived as unique by automated Content ID systems.
               </p>
             </div>
             <div>
-              <h3 className="text-md font-semibold text-gray-800 mb-2">Secure Video Metadata Scrubber</h3>
+              <h3 className="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Secure Video Metadata Scrubber</h3>
               <p className="text-sm mb-4">
-                Our <strong className="text-gray-800">free video metadata editor</strong> allows you to completely <strong className="text-gray-800">remove video metadata</strong> and <strong className="text-gray-800">change video MD5 hash</strong> values instantly. As a <strong className="text-gray-800">secure video editor</strong>, all processing happens locally in your browser using WebAssembly. This means your files are never uploaded to a server, providing <strong className="text-gray-800">100% private video editing</strong> with no data leaks.
+                Our <strong className="text-gray-800 dark:text-gray-200">free video metadata editor</strong> allows you to completely <strong className="text-gray-800 dark:text-gray-200">remove video metadata</strong> and <strong className="text-gray-800 dark:text-gray-200">change video MD5 hash</strong> values instantly. As a <strong className="text-gray-800 dark:text-gray-200">secure video editor</strong>, all processing happens locally in your browser using WebAssembly. This means your files are never uploaded to a server, providing <strong className="text-gray-800 dark:text-gray-200">100% private video editing</strong> with no data leaks.
               </p>
             </div>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-gray-100">
-            <h3 className="text-md font-semibold text-gray-800 mb-2">Why Use Our Video Footprint Editor?</h3>
+          <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Why Use Our Video Footprint Editor?</h3>
             <p className="text-sm">
-              Whether you need to <strong className="text-gray-800">scrub video metadata online</strong> or require a <strong className="text-gray-800">no watermark video editor free</strong> of charge, BitBrainTech provides a professional-grade toolkit. It's the perfect solution for creators who need to repurpose content while maintaining original quality and ensuring privacy. Our <strong className="text-gray-800">video unique hash generator</strong> is fast, reliable, and completely free to use.
+              Whether you need to <strong className="text-gray-800 dark:text-gray-200">scrub video metadata online</strong> or require a <strong className="text-gray-800 dark:text-gray-200">no watermark video editor free</strong> of charge, BitBrainTech provides a professional-grade toolkit. It's the perfect solution for creators who need to repurpose content while maintaining original quality and ensuring privacy. Our <strong className="text-gray-800 dark:text-gray-200">video unique hash generator</strong> is fast, reliable, and completely free to use.
             </p>
           </div>
         </div>
@@ -780,24 +768,24 @@ export default function App() {
       </main>
 
       {/* Global Footer */}
-      <footer className="bg-white border-t border-gray-200 py-8 mt-auto">
+      <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8 mt-auto">
         <div className="max-w-5xl mx-auto px-4 flex flex-col items-center gap-4">
-          <div className="flex gap-6 text-sm font-medium text-gray-600">
+          <div className="flex flex-wrap justify-center gap-6 text-sm font-medium text-gray-600 dark:text-gray-400">
             <Link 
               to="/" 
-              className={`transition-colors ${location.pathname === '/' ? 'text-blue-600' : 'hover:text-blue-600'}`}
+              className={`transition-colors ${location.pathname === '/' ? 'text-blue-600 dark:text-blue-400' : 'hover:text-blue-600 dark:hover:text-blue-400'}`}
             >
               Home
             </Link>
             <Link 
               to="/how-it-works" 
-              className={`transition-colors ${location.pathname === '/how-it-works' ? 'text-blue-600' : 'hover:text-blue-600'}`}
+              className={`transition-colors ${location.pathname === '/how-it-works' ? 'text-blue-600 dark:text-blue-400' : 'hover:text-blue-600 dark:hover:text-blue-400'}`}
             >
               How it Works
             </Link>
             <Link 
               to="/privacy" 
-              className={`transition-colors ${location.pathname === '/privacy' ? 'text-blue-600' : 'hover:text-blue-600'}`}
+              className={`transition-colors ${location.pathname === '/privacy' ? 'text-blue-600 dark:text-blue-400' : 'hover:text-blue-600 dark:hover:text-blue-400'}`}
             >
               Privacy Policy
             </Link>
@@ -805,13 +793,13 @@ export default function App() {
               href="https://www.facebook.com/bitbraintechns" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 transition-colors hover:text-blue-600"
+              className="flex items-center gap-1.5 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
             >
               <Facebook className="w-4 h-4" />
               Facebook
             </a>
           </div>
-          <p className="text-xs text-gray-500 text-center max-w-2xl">
+          <p className="text-xs text-gray-500 dark:text-gray-500 text-center max-w-2xl">
             <strong>Disclaimer:</strong> BitBrainTech provides tools for personal, educational, and fair-use purposes only. Users are solely responsible for ensuring they have the right to download, modify, or process any media. We do not host or store user files on our servers.
           </p>
         </div>

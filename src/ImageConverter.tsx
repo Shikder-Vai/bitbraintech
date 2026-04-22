@@ -84,12 +84,12 @@ export default function ImageConverter() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+    <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
       <div className="flex items-center gap-3 mb-6">
-        <ImageIcon className="w-8 h-8 text-blue-600" />
+        <ImageIcon className="w-8 h-8 text-blue-600 dark:text-blue-400" />
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Image Converter</h2>
-          <p className="text-gray-500 text-sm mt-1">Convert images between PNG, JPG, and WEBP formats locally.</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Image Converter</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Convert images between PNG, JPG, and WEBP formats locally.</p>
         </div>
       </div>
 
@@ -97,7 +97,7 @@ export default function ImageConverter() {
         <div className="space-y-6">
           <div 
             onClick={() => fileInputRef.current?.click()}
-            className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 hover:border-blue-500 transition-colors cursor-pointer group"
+            className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 text-center hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-blue-500 dark:hover:border-blue-400 transition-colors cursor-pointer group"
           >
             <input 
               type="file" 
@@ -110,24 +110,24 @@ export default function ImageConverter() {
               <img src={image} alt="Preview" className="max-h-64 mx-auto rounded-lg object-contain" />
             ) : (
               <div className="flex flex-col items-center">
-                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
-                  <Upload className="w-8 h-8 text-blue-600" />
+                <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+                  <Upload className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">Upload Image</h3>
-                <p className="text-sm text-gray-500">PNG, JPG, WEBP, GIF</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Upload Image</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">PNG, JPG, WEBP, GIF</p>
               </div>
             )}
           </div>
 
           {image && (
-            <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 space-y-4">
-              <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                <Settings className="w-5 h-5 text-blue-600" />
+            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 space-y-4">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                <Settings className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 Conversion Settings
               </h3>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Target Format</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Target Format</label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {Object.entries(formatMap).map(([mime, label]) => (
                     <button
@@ -135,8 +135,8 @@ export default function ImageConverter() {
                       onClick={() => setTargetFormat(mime)}
                       className={`py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
                         targetFormat === mime
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600'
                       }`}
                     >
                       {label}
@@ -148,8 +148,8 @@ export default function ImageConverter() {
               {targetFormat !== 'image/png' && targetFormat !== 'image/gif' && (
                 <div>
                   <div className="flex justify-between mb-2">
-                    <label className="text-sm font-medium text-gray-700">Quality</label>
-                    <span className="text-sm text-gray-500">{Math.round(quality * 100)}%</span>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Quality</label>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{Math.round(quality * 100)}%</span>
                   </div>
                   <input 
                     type="range" 
@@ -158,9 +158,9 @@ export default function ImageConverter() {
                     step="0.05"
                     value={quality}
                     onChange={(e) => setQuality(parseFloat(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
                   />
-                  <p className="text-xs text-gray-500 mt-2">Lower quality reduces file size but may introduce artifacts.</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Lower quality reduces file size but may introduce artifacts.</p>
                 </div>
               )}
 
@@ -187,9 +187,9 @@ export default function ImageConverter() {
 
         <div>
           {outputImage ? (
-            <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 h-full flex flex-col">
-              <h3 className="font-semibold text-gray-900 mb-4">Converted Result</h3>
-              <div className="flex-1 flex items-center justify-center bg-white rounded-lg border border-gray-200 p-4 mb-4">
+            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 h-full flex flex-col">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Converted Result</h3>
+              <div className="flex-1 flex items-center justify-center bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4">
                 <img src={outputImage} alt="Converted" className="max-h-64 object-contain" />
               </div>
               <button
@@ -201,9 +201,9 @@ export default function ImageConverter() {
               </button>
             </div>
           ) : (
-            <div className="h-full border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center text-gray-400 bg-gray-50/50 min-h-[300px]">
+            <div className="h-full border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl flex items-center justify-center text-gray-400 dark:text-gray-500 bg-gray-50/50 dark:bg-gray-800/20 min-h-[300px]">
               <div className="text-center">
-                <ImageIcon className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                <ImageIcon className="w-12 h-12 mx-auto mb-3 opacity-20 dark:opacity-10" />
                 <p>Converted image will appear here</p>
               </div>
             </div>
@@ -212,28 +212,28 @@ export default function ImageConverter() {
       </div>
 
       {/* Optimized SEO Content Block for Image Converter */}
-      <div className="mt-12 bg-white p-8 rounded-xl shadow-sm border border-gray-200 text-gray-600 leading-relaxed">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 text-center">Free Image Converter Online: JPG, PNG, WEBP & GIF</h2>
+      <div className="mt-12 bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 leading-relaxed">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">Free Image Converter Online: JPG, PNG, WEBP & GIF</h2>
         
         <div className="grid md:grid-cols-2 gap-8">
           <div>
-            <h3 className="text-md font-semibold text-gray-800 mb-2">Convert JPG to PNG Free Online</h3>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Convert JPG to PNG Free Online</h3>
             <p className="text-sm mb-4">
-              Need a reliable <strong className="text-gray-800">jpg to png converter free online</strong>? Our tool handles all your image conversion needs instantly. Whether you're looking for a <strong className="text-gray-800">png to jpg converter</strong> or want to <strong className="text-gray-800">convert image to webp</strong> for better web performance, BitBrainTech provides high-quality results with adjustable compression settings.
+              Our <strong className="text-gray-800 dark:text-gray-100">jpg to png converter free online</strong>? Our tool handles all your image conversion needs instantly. Whether you're looking for a <strong className="text-gray-800 dark:text-gray-100">png to jpg converter</strong> or want to <strong className="text-gray-800 dark:text-gray-100">convert image to webp</strong> for better web performance, BitBrainTech provides high-quality results with adjustable compression settings.
             </p>
           </div>
           <div>
-            <h3 className="text-md font-semibold text-gray-800 mb-2">Secure & Private Image Format Converter</h3>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Secure & Private Image Format Converter</h3>
             <p className="text-sm mb-4">
-              Our <strong className="text-gray-800">free img converter online</strong> works entirely in your browser. This means your private photos are never uploaded to a server, ensuring <strong className="text-gray-800">100% private image conversion</strong>. It's a perfect <strong className="text-gray-800">batch image converter</strong> alternative for users who value their data security and need fast, local processing.
+              Our <strong className="text-gray-800 dark:text-gray-100">free img converter online</strong> works entirely in your browser. This means your private photos are never uploaded to a server, ensuring <strong className="text-gray-800 dark:text-gray-100">100% private image conversion</strong>. It's a perfect <strong className="text-gray-800 dark:text-gray-100">batch image converter</strong> alternative for users who value their data security and need fast, local processing.
             </p>
           </div>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-gray-100">
-          <h3 className="text-md font-semibold text-gray-800 mb-2">Why Use Our Online Image Converter?</h3>
+        <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
+          <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Why Use Our Online Image Converter?</h3>
           <p className="text-sm">
-            BitBrainTech offers a versatile <strong className="text-gray-800">image converter</strong> that supports all popular formats including JPG, PNG, WEBP, and GIF. Use our <strong className="text-gray-800">image quality compressor</strong> to reduce file size without significant loss in clarity. It's the ultimate <strong className="text-gray-800">free online image toolkit</strong> for designers, developers, and casual users who need quick and secure file transformations.
+            BitBrainTech offers a versatile <strong className="text-gray-800 dark:text-gray-100">image converter</strong> that supports all popular formats including JPG, PNG, WEBP, and GIF. Use our <strong className="text-gray-800 dark:text-gray-100">image quality compressor</strong> to reduce file size without significant loss in clarity. It's the ultimate <strong className="text-gray-800 dark:text-gray-100">free online image toolkit</strong> for designers, developers, and casual users who need quick and secure file transformations.
           </p>
         </div>
       </div>
