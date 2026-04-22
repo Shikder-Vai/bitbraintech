@@ -98,7 +98,7 @@ export default function App() {
     'home': {
       title: 'AI Background Remover Pro | Free Online Background Removal',
       description: 'Remove image backgrounds instantly with professional AI precision. Features manual mask refinement, zoom, pan, and 100% privacy. No upload required, runs in your browser.',
-      url: 'https://bitbraintech.online/'
+      url: 'https://bitbraintech.online'
     },
     'video-editor': {
       title: 'Free Video Metadata Editor | Bypass Copyright YouTube & TikTok',
