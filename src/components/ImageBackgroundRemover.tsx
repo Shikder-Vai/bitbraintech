@@ -528,7 +528,7 @@ export default function ImageBackgroundRemover() {
         <h1 className="text-4xl md:text-6xl font-black tracking-tight text-gray-900 dark:text-white leading-tight">
           Professional AI <span className="text-blue-600">Background Remover</span>
         </h1>
-        <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto font-medium">
+        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium">
           Remove backgrounds with professional precision using advanced AI. 
           100% private, runs entirely in your browser.
         </p>
@@ -570,7 +570,7 @@ export default function ImageBackgroundRemover() {
                         <Upload className="w-8 h-8 text-blue-500" />
                       </div>
                       <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">Drop your image here</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">PNG, JPG or WebP up to 15MB</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">PNG, JPG or WebP up to 15MB</p>
                       <div className="mt-8 px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-sm font-bold text-gray-700 dark:text-gray-300 shadow-sm group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all">
                         Browse Files
                       </div>
@@ -667,7 +667,7 @@ export default function ImageBackgroundRemover() {
                         </div>
                       </div>
                       <h4 className="text-lg font-black text-gray-900 dark:text-white mb-1">{processingStatus}</h4>
-                      <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest animate-pulse">Running Neural Network</p>
+                      <p className="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest animate-pulse">Running Neural Network</p>
                     </div>
                   )}
 
@@ -686,9 +686,9 @@ export default function ImageBackgroundRemover() {
                   ) : (
                     <div className="flex flex-col items-center text-center px-12 opacity-30">
                       <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6">
-                        <Loader2 className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                        <Loader2 className="w-8 h-8 text-gray-600 dark:text-gray-400" />
                       </div>
-                      <p className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Awaiting Neural Process</p>
+                      <p className="text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">Awaiting Neural Process</p>
                     </div>
                   )}
                 </div>
@@ -747,7 +747,7 @@ export default function ImageBackgroundRemover() {
               <f.icon className={`w-6 h-6 text-${f.color}-600 dark:text-${f.color}-400`} />
             </div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{f.title}</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium leading-relaxed">{f.desc}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 font-medium leading-relaxed">{f.desc}</p>
           </div>
         ))}
       </motion.div>

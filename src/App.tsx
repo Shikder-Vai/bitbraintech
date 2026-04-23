@@ -57,6 +57,7 @@ export default function App() {
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [outputUrl, setOutputUrl] = useState<string | null>(null);
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -77,6 +78,13 @@ export default function App() {
     }
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    return () => {
+      if (videoPreviewUrl) URL.revokeObjectURL(videoPreviewUrl);
+      if (outputUrl) URL.revokeObjectURL(outputUrl);
+    };
+  }, [videoPreviewUrl, outputUrl]);
 
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
@@ -221,6 +229,11 @@ export default function App() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (videoPreviewUrl) URL.revokeObjectURL(videoPreviewUrl);
+      if (outputUrl) URL.revokeObjectURL(outputUrl);
+      
+      const url = URL.createObjectURL(file);
+      setVideoPreviewUrl(url);
       setVideoFile(file);
       setOutputUrl(null);
       setError(null);
@@ -478,6 +491,7 @@ export default function App() {
               <button 
                 className="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               >
                 {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
@@ -538,7 +552,7 @@ export default function App() {
                   <div className="aspect-video bg-black rounded-lg overflow-hidden relative">
                     <video 
                       ref={videoRef}
-                      src={URL.createObjectURL(videoFile)} 
+                      src={videoPreviewUrl || undefined} 
                       className="w-full h-full object-contain"
                       controls
                     />
@@ -548,7 +562,12 @@ export default function App() {
                       {videoFile.name}
                     </span>
                     <button 
-                      onClick={() => { setVideoFile(null); setOutputUrl(null); }}
+                      onClick={() => { 
+                        if (videoPreviewUrl) URL.revokeObjectURL(videoPreviewUrl);
+                        setVideoPreviewUrl(null);
+                        setVideoFile(null); 
+                        setOutputUrl(null); 
+                      }}
                       className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium"
                       disabled={processing}
                     >
