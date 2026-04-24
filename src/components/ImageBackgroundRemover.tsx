@@ -667,7 +667,7 @@ export default function ImageBackgroundRemover() {
                         </div>
                       </div>
                       <h4 className="text-lg font-black text-gray-900 dark:text-white mb-1">{processingStatus}</h4>
-                      <p className="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest animate-pulse">Running Neural Network</p>
+                      <p className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-widest animate-pulse">Running Neural Network</p>
                     </div>
                   )}
 
@@ -685,10 +685,10 @@ export default function ImageBackgroundRemover() {
                     </div>
                   ) : (
                     <div className="flex flex-col items-center text-center px-12 opacity-30">
-                      <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6">
-                        <Loader2 className="w-8 h-8 text-gray-600 dark:text-gray-400" />
+                      <div className="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mb-6">
+                        <Loader2 className="w-8 h-8 text-gray-700 dark:text-gray-200" />
                       </div>
-                      <p className="text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">Awaiting Neural Process</p>
+                      <p className="text-sm font-black text-gray-800 dark:text-gray-100 uppercase tracking-widest">Awaiting Neural Process</p>
                     </div>
                   )}
                 </div>

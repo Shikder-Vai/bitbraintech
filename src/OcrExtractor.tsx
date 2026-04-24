@@ -3,7 +3,7 @@ import { createWorker, PSM } from 'tesseract.js';
 import { Document, Packer, Paragraph, TextRun } from 'docx';
 import { saveAs } from 'file-saver';
 import { FileText, Upload, Copy, Check, Loader2, Wand2, Download, Cloud, Cpu, Trash2 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 
 export default function OcrExtractor() {
   const [images, setImages] = useState<string[]>([]);
@@ -278,31 +278,54 @@ export default function OcrExtractor() {
       if (engine === 'cloud') {
         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
         
-        for (let i = 0; i < images.length; i++) {
-          const img = images[i];
+        // Process images in parallel for much faster results
+        const promises = images.map(async (img, i) => {
           const [prefix, base64Data] = img.split(',');
           const mimeType = prefix.match(/:(.*?);/)?.[1] || 'image/jpeg';
 
-          const response = await ai.models.generateContent({
-            model: 'gemini-3-flash-preview',
-            contents: [
-              {
-                parts: [
-                  { text: 'Extract all the text from this image exactly as it is written. Preserve the language, line breaks, and formatting. Do not add any markdown formatting like ``` or extra commentary. This may contain handwriting, read it carefully.' },
-                  {
-                    inlineData: {
-                      data: base64Data,
-                      mimeType: mimeType
+          try {
+            const response = await ai.models.generateContent({
+              model: 'gemini-3-flash-preview',
+              contents: [
+                {
+                  parts: [
+                    { text: 'Extract all the text from this image accurately. Preserve layout, line breaks and formatting. Output only the extracted text without any commentary.' },
+                    {
+                      inlineData: {
+                        data: base64Data,
+                        mimeType: mimeType
+                      }
                     }
-                  }
-                ]
+                  ]
+                }
+              ],
+              config: {
+                thinkingConfig: {
+                  thinkingLevel: ThinkingLevel.LOW
+                }
               }
-            ]
-          });
-          
-          fullText += (i > 0 ? '\n\n' : '') + (response.text || '');
-          setProgress(Math.round(((i + 1) / images.length) * 100));
-        }
+            });
+            
+            return { index: i, text: response.text || '' };
+          } catch (err) {
+            console.error(`Error processing image ${i}:`, err);
+            return { index: i, text: `[Error processing image ${i + 1}]` };
+          }
+        });
+
+        // Track progress as promises complete
+        let completedCount = 0;
+        const results = await Promise.all(
+          promises.map(p => p.then(res => {
+            completedCount++;
+            setProgress(Math.round((completedCount / images.length) * 100));
+            return res;
+          }))
+        );
+
+        // Sort results to maintain original order
+        const sortedResults = results.sort((a, b) => a.index - b.index);
+        fullText = sortedResults.map(r => r.text).join('\n\n---\n\n');
         
         setText(fullText);
       } else {
