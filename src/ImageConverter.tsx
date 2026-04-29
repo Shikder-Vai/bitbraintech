@@ -88,8 +88,8 @@ export default function ImageConverter() {
       <div className="flex items-center gap-3 mb-6">
         <ImageIcon className="w-8 h-8 text-blue-600 dark:text-blue-400" />
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Image Converter</h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Convert images between PNG, JPG, and WEBP formats locally.</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">Free Online Image Converter</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Batch convert images between PNG, JPG, and WEBP formats securely.</p>
         </div>
       </div>
 

@@ -177,7 +177,7 @@ export default function PdfTools() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">PDF Toolkit</h2>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">Free Professional PDF Toolkit</h1>
         <p className="text-gray-500 dark:text-gray-400">Secure, browser-based PDF processing. No files ever leave your device.</p>
       </div>
 
@@ -336,6 +336,33 @@ export default function PdfTools() {
         <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
           <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2">No Limits</h4>
           <p className="text-sm text-gray-500 dark:text-gray-400">Process as many files as you want. Your hardware is the only limit.</p>
+        </div>
+      </div>
+
+      {/* Optimized SEO Content Block for PDF Tools */}
+      <div className="mt-12 bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 leading-relaxed">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">Secure PDF Toolkit Online: Merge, Split & Convert for Free</h2>
+        
+        <div className="grid md:grid-cols-2 gap-8">
+          <div>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Merge PDF Online Free with No Registration</h3>
+            <p className="text-sm mb-4">
+              Need to <strong className="text-gray-800 dark:text-gray-100">merge PDF online free</strong>? Our toolkit allows you to combine multiple documents into a single professional file instantly. BitBrainTech provides a <strong className="text-gray-800 dark:text-gray-100">secure PDF merger</strong> that works entirely in your browser. Whether it's for business reports or academic papers, you can <strong className="text-gray-800 dark:text-gray-100">combine PDF files online</strong> without any server uploads or data privacy risks.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Extract Pages & Split PDF Locally</h3>
+            <p className="text-sm mb-4">
+              Our <strong className="text-gray-800 dark:text-gray-100">free PDF splitter</strong> is the perfect solution to <strong className="text-gray-800 dark:text-gray-100">extract pages from PDF online</strong>. With custom range support, you can precisely select the content you need. As a <strong className="text-gray-800 dark:text-gray-100">private PDF editor</strong>, all processing occurs on your device, making it one of the most <strong className="text-gray-800 dark:text-gray-100">secure PDF tools</strong> available for sensitive documents.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
+          <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Why Use Our Image to PDF Converter?</h3>
+          <p className="text-sm">
+            BitBrainTech features a high-performance <strong className="text-gray-800 dark:text-gray-100">jpg to pdf converter free online</strong>. Easily <strong className="text-gray-800 dark:text-gray-100">convert images to PDF</strong> while maintaining original resolution. It's an all-in-one <strong className="text-gray-800 dark:text-gray-100">free PDF toolkit</strong> designed for creators who need quick, reliable, and privacy-focused file management. No watermarks, no storage limits, just pure browser-based efficiency.
+          </p>
         </div>
       </div>
     </div>

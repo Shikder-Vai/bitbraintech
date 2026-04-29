@@ -72,7 +72,7 @@ export default function AudioExtractor() {
   return (
     <div className="max-w-3xl mx-auto space-y-8">
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Audio Extractor</h2>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">Free Video to MP3 Audio Extractor</h1>
         <p className="text-gray-500 dark:text-gray-400">Extract high-quality MP3 audio from any video file locally.</p>
       </div>
 
@@ -160,27 +160,43 @@ export default function AudioExtractor() {
         )}
       </div>
 
-      <div className="bg-gray-900 dark:bg-black p-8 rounded-2xl text-white shadow-xl space-y-6">
-        <h3 className="text-xl font-bold flex items-center gap-2">
-          <FileAudio className="w-6 h-6 text-blue-400" />
-          Why use BitBrainTech Audio Extractor?
-        </h3>
-        <div className="grid md:grid-cols-2 gap-6 text-sm text-gray-400">
-          <div className="space-y-2">
-            <h4 className="text-white font-semibold">Privacy First</h4>
-            <p className="dark:text-gray-500">Your video never leaves your browser. Extraction happens locally on your CPU.</p>
+      <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl space-y-6 border border-gray-100 dark:border-gray-800">
+        <h2 className="text-xl font-bold flex items-center gap-2 text-gray-900 dark:text-white justify-center underline underline-offset-8 decoration-blue-500/30">
+          <FileAudio className="w-6 h-6 text-blue-500" />
+          High-Quality Video to MP3 Converter
+        </h2>
+        
+        <div className="grid md:grid-cols-2 gap-8 text-gray-600 dark:text-gray-400">
+          <div>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Fast Video to Audio Extraction Online</h3>
+            <p className="text-sm">
+              Are you looking to <strong className="text-gray-800 dark:text-gray-100">extract audio from video free online</strong>? BitBrainTech provides a professional-grade <strong className="text-gray-800 dark:text-gray-100">video to mp3 converter</strong> that works instantly in your browser. Whether you want to <strong className="text-gray-800 dark:text-gray-100">convert mp4 to mp3</strong> or extract clips from MOV and AVI files, our tool delivers high-fidelity sound without any server lag.
+            </p>
           </div>
-          <div className="space-y-2">
-            <h4 className="text-white font-semibold">High Quality</h4>
-            <p className="dark:text-gray-500">We extract audio at 192kbps constant bitrate for the best listening experience.</p>
+          <div>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">100% Private & Secure Audio Ripper</h3>
+            <p className="text-sm">
+              As a <strong className="text-gray-800 dark:text-gray-100">secure audio extractor</strong>, we guarantee that your files never leave your computer. Our <strong className="text-gray-800 dark:text-gray-100">browser-based video to audio tool</strong> uses local processing power, making it the most <strong className="text-gray-800 dark:text-gray-100">private video to mp3</strong> solution available. No logs, no data collection, just pure extraction performance for creators.
+            </p>
           </div>
-          <div className="space-y-2 flash-card">
-            <h4 className="text-white font-semibold">Universal Support</h4>
-            <p className="dark:text-gray-500">Supports MP4, MOV, AVI, and most common video formats.</p>
+        </div>
+
+        <div className="pt-6 border-t border-gray-100 dark:border-gray-800 grid md:grid-cols-4 gap-4 text-xs">
+          <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl">
+            <h4 className="font-bold text-gray-900 dark:text-white mb-1">High Bitrate</h4>
+            <p>Export audio at 192kbps for crystal-clear quality.</p>
           </div>
-          <div className="space-y-2">
-            <h4 className="text-white font-semibold">No Watermarks</h4>
-            <p className="dark:text-gray-500">Completely free to use with no hidden costs or watermarks on your files.</p>
+          <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl">
+            <h4 className="font-bold text-gray-900 dark:text-white mb-1">No Install</h4>
+            <p>No software or browser extensions required.</p>
+          </div>
+          <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl">
+            <h4 className="font-bold text-gray-900 dark:text-white mb-1">Bulk Extraction</h4>
+            <p>Process multiple videos safely and quickly.</p>
+          </div>
+          <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl">
+            <h4 className="font-bold text-gray-900 dark:text-white mb-1">Privacy Guarantee</h4>
+            <p>100% on-device processing for total data security.</p>
           </div>
         </div>
       </div>

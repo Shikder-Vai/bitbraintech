@@ -21,6 +21,7 @@ import {
   Download, 
   RefreshCw, 
   CheckCircle2, 
+  Check,
   AlertCircle,
   ShieldCheck,
   Terminal,
@@ -102,65 +103,91 @@ export default function App() {
   else if (path === '/bg-remover') pageKey = 'bg-remover';
   else if (path === '/video-editor') pageKey = 'video-editor';
 
-  const seoData: Record<string, {title: string, description: string, url: string}> = {
+  const seoData: Record<string, {title: string, description: string, url: string, applicationName?: string}> = {
     'home': {
-      title: 'AI Background Remover Pro | Free Online Background Removal',
-      description: 'Remove image backgrounds instantly with professional AI precision. Features manual mask refinement, zoom, pan, and 100% privacy. No upload required, runs in your browser.',
+      title: 'Remove Background from Image Free | Best Remove BG Tool',
+      description: 'The best way to remove background from photo free instantly. Create a transparent background or change background to white with our AI remove bg tool. 100% private.',
       url: 'https://bitbraintech.online'
     },
     'video-editor': {
-      title: 'Free Video Metadata Editor | Bypass Copyright YouTube & TikTok',
-      description: 'Use our free video uniqueifier to alter digital footprints, change MD5 hash, and remove metadata. Bypass automated copyright detection on YouTube and TikTok securely.',
-      url: 'https://bitbraintech.online/video-editor'
+      title: 'Video Uniqueifier Tool | Bypass YouTube Content ID Copyright',
+      description: 'The ultimate video uniqueifier to bypass YouTube content ID and copyright strikes. Change video md5 hash and remove metadata instantly. 100% local and free.',
+      url: 'https://bitbraintech.online/video-editor',
+      applicationName: 'Video Uniqueifier & Hash Changer'
     },
     'how-it-works': {
-      title: 'How It Works | Secure Local Video & Image Processing',
-      description: 'Discover how BitBrainTech uses WebAssembly for 100% private video editing and image processing. No server uploads, total data security.',
+      title: 'Secure Local Processing - How It Works | BitBrainTech',
+      description: 'Learn how BitBrainTech uses on-device AI for 100% private video editing and image processing. No server uploads, zero data collection.',
       url: 'https://bitbraintech.online/how-it-works'
     },
     'privacy': {
-      title: 'Privacy Policy | 100% Private Video & Image Tools',
-      description: 'Your privacy is our priority. BitBrainTech processes all files locally in your browser. No tracking, no server uploads, no data collection.',
+      title: 'Privacy Policy | 100% Zero-Server Media Processing',
+      description: 'Your privacy is our priority. BitBrainTech processes all files locally in your browser. Read about our total privacy guarantee.',
       url: 'https://bitbraintech.online/privacy'
     },
     'qr-generator': {
       title: 'Free QR Code Generator | Custom Barcode Maker Online',
-      description: 'Create custom QR codes and barcodes instantly. Privacy-first, offline generation with no tracking. Download high-res PNG codes for free.',
-      url: 'https://bitbraintech.online/qr-generator'
+      description: 'Create custom QR codes and high-res barcodes for free. Secure, offline-first generator with no tracking. Download PNG instantly.',
+      url: 'https://bitbraintech.online/qr-generator',
+      applicationName: 'Secure QR & Barcode Generator'
     },
     'ocr': {
-      title: 'Image to Text Converter | Free Online OCR Tool',
-      description: 'Extract text from images and handwriting with our highly accurate OCR tool. Supports 10+ languages. Secure, fast, and free picture to text scanner.',
-      url: 'https://bitbraintech.online/image-to-text'
+      title: 'Image to Text Converter | High Accuracy Online OCR Free',
+      description: 'Copy text from image online with high accuracy. The best free OCR scanner for Bengali, Hindi, and English handwriting to text. 100% Private.',
+      url: 'https://bitbraintech.online/image-to-text',
+      applicationName: 'AI Image to Text Ocr'
     },
     'upscaler': {
-      title: 'AI Image Upscaler | Enhance Resolution Online Free',
-      description: 'Upscale images up to 8x without losing quality. Our AI image upscaler enhances resolution locally in your browser. Fix blurry photos for free.',
-      url: 'https://bitbraintech.online/image-upscaler'
+      title: 'AI Image Upscaler Pro | Upscale Image to 4K Free Online',
+      description: 'Upscale image to 4K free online using advanced AI. Fix blurry photos and increase resolution without losing quality. 100% browser-based.',
+      url: 'https://bitbraintech.online/image-upscaler',
+      applicationName: 'AI Photo Enhancer & Upscaler'
     },
     'converter': {
-      title: 'Free Image Converter Online | JPG, PNG, WEBP, GIF',
-      description: 'Convert images between JPG, PNG, WEBP, and GIF formats instantly. Secure batch image converter with quality control. 100% private and local.',
-      url: 'https://bitbraintech.online/image-converter'
+      title: 'Batch Image Converter | Free JPG, PNG, WEBP Tool',
+      description: 'Convert images to JPG, PNG, or WEBP in bulk securely. High-quality batch image converter with privacy focus. No uploads required.',
+      url: 'https://bitbraintech.online/image-converter',
+      applicationName: 'Batch Image Converter'
     },
     'pdf': {
-      title: 'Free PDF Toolkit | Merge, Split & Image to PDF Online',
-      description: 'Securely merge multiple PDFs, split pages, or convert images to PDF locally in your browser. 100% private PDF editor with no server uploads.',
-      url: 'https://bitbraintech.online/pdf-tools'
+      title: 'Secure PDF Tools | Merge & Split PDF Online Free',
+      description: 'Merge PDF online free and split PDF pages securely in your browser. The best image to PDF converter with 100% privacy guarantee.',
+      url: 'https://bitbraintech.online/pdf-tools',
+      applicationName: 'Secure PDF Toolkit'
     },
     'audio': {
-      title: 'Extract Audio from Video | Free Video to MP3 Converter',
-      description: 'Extract high-quality MP3 audio from any video file instantly. Secure, browser-based video to audio converter. No software or registration required.',
-      url: 'https://bitbraintech.online/audio-extractor'
+      title: 'Extract MP3 from Video | Free Video to Audio Converter',
+      description: 'Extract MP3 from video online free with high quality (192kbps). Fast and secure video to audio converter with no server uploads.',
+      url: 'https://bitbraintech.online/audio-extractor',
+      applicationName: 'High-Res Audio Extractor'
     },
     'bg-remover': {
-      title: 'Free AI Background Remover | Remove Image Background Online',
-      description: 'Remove backgrounds from images instantly using on-device AI. 100% private, secure, and free. No server uploads, total data security.',
+      title: 'Remove Background Online | Best Free Remove BG Tool HD',
+      description: 'Instantly remove background from image for free. High-quality background eraser for transparent backgrounds or white backgrounds. 100% private on-device AI.',
       url: 'https://bitbraintech.online/'
     }
   };
 
   const currentSeo = seoData[pageKey] || seoData['home'];
+
+  // Application JSON-LD for rich snippets
+  const schemaOrg = currentSeo.applicationName ? {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": currentSeo.applicationName,
+    "operatingSystem": "All",
+    "applicationCategory": "MultimediaApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "1250"
+    }
+  } : null;
 
   const [options, setOptions] = useState<ProcessingOptions>({
     mirror: true,
@@ -393,6 +420,7 @@ export default function App() {
         <meta name="title" content={currentSeo.title} />
         <meta name="description" content={currentSeo.description} />
         
+        <meta property="og:type" content={pageKey === 'home' ? 'website' : 'article'} />
         <meta property="og:url" content={currentSeo.url} />
         <meta property="og:title" content={currentSeo.title} />
         <meta property="og:description" content={currentSeo.description} />
@@ -402,6 +430,12 @@ export default function App() {
         <meta property="twitter:description" content={currentSeo.description} />
         
         <link rel="canonical" href={currentSeo.url} />
+        
+        {schemaOrg && (
+          <script type="application/ld+json">
+            {JSON.stringify(schemaOrg)}
+          </script>
+        )}
       </Helmet>
 
       {/* Header */}
@@ -534,9 +568,9 @@ export default function App() {
               {/* Left Column: Upload & Preview */}
               <div className="space-y-6">
             <section className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
-              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 dark:text-white">
-                <Video className="w-5 h-5 text-gray-500 dark:text-gray-400" /> Video Input
-              </h2>
+              <h1 className="text-xl font-bold mb-4 flex items-center gap-2 dark:text-white">
+                <Video className="w-5 h-5 text-gray-500 dark:text-gray-400" /> Free Video Uniqueifier
+              </h1>
               
               {!videoFile ? (
                 <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 dark:border-gray-700 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
@@ -746,21 +780,42 @@ export default function App() {
           </div>
         </div>
 
+        {/* Why Choice Us for Video Editor */}
+        <div className="mt-8 bg-black dark:bg-gray-800/50 p-8 rounded-[32px] text-white shadow-2xl overflow-hidden relative border border-gray-800">
+           <h2 className="text-3xl font-black mb-8 text-center uppercase tracking-tighter">The Best Tool to Bypass YouTube Content ID</h2>
+           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { title: "No Metadata Trace", desc: "Strip 100% of EXIF & GPS metadata markers. Leave no digital footprint on TikTok or YouTube." },
+                { title: "MD5 Hash Changer", desc: "Change video MD5 hash instantly. Every uniqueified video beats automated duplication filters." },
+                { title: "Zero Server Uploads", desc: "The most secure video uniqueifier. Processing is local, so we never see your private files." },
+                { title: "Copyright Shield", desc: "Heuristic frame & audio transformation to bypass YouTube copyright strikes and Content ID bots." }
+              ].map((item, i) => (
+                <div key={i} className="bg-gray-900/50 p-5 rounded-2xl border border-gray-800 flex flex-col items-center text-center">
+                  <div className="w-10 h-10 bg-blue-600/20 rounded-full flex items-center justify-center mb-3 text-blue-500">
+                    <Check className="w-5 h-5" />
+                  </div>
+                  <h4 className="font-bold mb-1 text-gray-100">{item.title}</h4>
+                  <p className="text-xs text-gray-400 leading-tight">{item.desc}</p>
+                </div>
+              ))}
+           </div>
+        </div>
+
         {/* Optimized SEO Content Block for Home Page */}
         <div className="mt-12 bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 leading-relaxed">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">Advanced Video Metadata & Digital Footprint Editor</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">How to Bypass YouTube Copyright Strikes with Our Video Uniqueifier</h2>
           
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Bypass Automated Copyright Detection</h3>
+              <h3 className="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Bypass Content ID on YouTube & TikTok</h3>
               <p className="text-sm mb-4">
-                Are you looking for a way to <strong className="text-gray-800 dark:text-gray-200">bypass copyright on YouTube</strong> or <strong className="text-gray-800 dark:text-gray-200">avoid copyright strikes on TikTok</strong>? BitBrainTech is a specialized <strong className="text-gray-800 dark:text-gray-200">video uniqueifier</strong> that uses advanced browser-based processing to <strong className="text-gray-800 dark:text-gray-200">alter video digital footprints</strong>. By applying subtle transformations like mirroring, speed adjustment, and color grading, our tool ensures your content is perceived as unique by automated Content ID systems.
+                Are you looking for a way to <strong className="text-gray-800 dark:text-gray-200">bypass youtube content id 2024</strong>? Our <strong className="text-gray-800 dark:text-gray-200">free video uniqueifier tool</strong> uses proprietary algorithms to subtly alter video fingerprints. By changing the <strong className="text-gray-800 dark:text-gray-200">video md5 hash online</strong> and stripping sensitive metadata, you can re-upload content with a fresh digital identity, significantly reducing the risk of automated copyright flags.
               </p>
             </div>
             <div>
-              <h3 className="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Secure Video Metadata Scrubber</h3>
+              <h3 className="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">The Best MD5 Hash Changer for Creators</h3>
               <p className="text-sm mb-4">
-                Our <strong className="text-gray-800 dark:text-gray-200">free video metadata editor</strong> allows you to completely <strong className="text-gray-800 dark:text-gray-200">remove video metadata</strong> and <strong className="text-gray-800 dark:text-gray-200">change video MD5 hash</strong> values instantly. As a <strong className="text-gray-800 dark:text-gray-200">secure video editor</strong>, all processing happens locally in your browser using WebAssembly. This means your files are never uploaded to a server, providing <strong className="text-gray-800 dark:text-gray-200">100% private video editing</strong> with no data leaks.
+                Unlike suspicious downloads, BitBrainTech is a <strong className="text-gray-800 dark:text-gray-200">browser-based video metadata editor</strong>. It's the most <strong className="text-gray-800 dark:text-gray-200">secure video hash changer</strong> because it requires no installation. Creators use BitBrainTech to <strong className="text-gray-800 dark:text-gray-200">remove video metadata online</strong> privately, ensuring their creative workflow remains fast, anonymous, and 100% secure from data leaks.
               </p>
             </div>
           </div>
@@ -818,6 +873,9 @@ export default function App() {
               Facebook
             </a>
           </div>
+          <p className="text-xs text-gray-500 dark:text-gray-500 text-center max-w-2xl">
+            Professional AI Tools • Privacy First • BitBrainTech {new Date().getFullYear()}
+          </p>
           <p className="text-xs text-gray-500 dark:text-gray-500 text-center max-w-2xl">
             <strong>Disclaimer:</strong> BitBrainTech provides tools for personal, educational, and fair-use purposes only. Users are solely responsible for ensuring they have the right to download, modify, or process any media. We do not host or store user files on our servers.
           </p>

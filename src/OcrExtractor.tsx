@@ -2,7 +2,8 @@ import React, { useState, useRef } from 'react';
 import { createWorker, PSM } from 'tesseract.js';
 import { Document, Packer, Paragraph, TextRun } from 'docx';
 import { saveAs } from 'file-saver';
-import { FileText, Upload, Copy, Check, Loader2, Wand2, Download, Cloud, Cpu, Trash2 } from 'lucide-react';
+import { FileText, Upload, Copy, Check, Loader2, Wand2, Download, Cloud, Cpu, Trash2, ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 
 export default function OcrExtractor() {
@@ -14,7 +15,20 @@ export default function OcrExtractor() {
   const [enhance, setEnhance] = useState(true);
   const [language, setLanguage] = useState<string>('eng');
   const [engine, setEngine] = useState<'local' | 'cloud'>('local');
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsLangDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const LANGUAGES = [
     { code: 'eng', name: 'English' },
@@ -25,8 +39,31 @@ export default function OcrExtractor() {
     { code: 'deu', name: 'German' },
     { code: 'ara', name: 'Arabic' },
     { code: 'chi_sim', name: 'Chinese (Simplified)' },
+    { code: 'chi_tra', name: 'Chinese (Traditional)' },
     { code: 'rus', name: 'Russian' },
     { code: 'jpn', name: 'Japanese' },
+    { code: 'kor', name: 'Korean' },
+    { code: 'ita', name: 'Italian' },
+    { code: 'por', name: 'Portuguese' },
+    { code: 'tur', name: 'Turkish' },
+    { code: 'vie', name: 'Vietnamese' },
+    { code: 'ind', name: 'Indonesian' },
+    { code: 'tha', name: 'Thai' },
+    { code: 'pol', name: 'Polish' },
+    { code: 'nld', name: 'Dutch' },
+    { code: 'swe', name: 'Swedish' },
+    { code: 'tam', name: 'Tamil' },
+    { code: 'tel', name: 'Telugu' },
+    { code: 'kan', name: 'Kannada' },
+    { code: 'mal', name: 'Malayalam' },
+    { code: 'guj', name: 'Gujarati' },
+    { code: 'mar', name: 'Marathi' },
+    { code: 'pan', name: 'Punjabi' },
+    { code: 'urd', name: 'Urdu' },
+    { code: 'nep', name: 'Nepali' },
+    { code: 'lat', name: 'Latin' },
+    { code: 'heb', name: 'Hebrew' },
+    { code: 'ell', name: 'Greek' },
   ];
 
   const MAX_IMAGES = 6;
@@ -393,8 +430,8 @@ export default function OcrExtractor() {
       <div className="flex items-center gap-3 mb-6">
         <FileText className="w-8 h-8 text-blue-600 dark:text-blue-400" />
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Image to Text Extractor</h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Extract text from images instantly using local OCR. 100% private.</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">Free Image to Text Extractor</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Extract text from images instantly using secure online OCR. 100% private.</p>
         </div>
       </div>
 
@@ -474,16 +511,49 @@ export default function OcrExtractor() {
               <>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Select Language</label>
-                  <select
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
-                    disabled={isProcessing}
-                    className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed"
-                  >
-                    {LANGUAGES.map(lang => (
-                      <option key={lang.code} value={lang.code}>{lang.name}</option>
-                    ))}
-                  </select>
+                  <div className="relative" ref={dropdownRef}>
+                    <button
+                      type="button"
+                      onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+                      disabled={isProcessing}
+                      className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed flex items-center justify-between transition-all"
+                    >
+                      <span>
+                        {LANGUAGES.find(l => l.code === language)?.name || 'Select Language'}
+                      </span>
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    <AnimatePresence>
+                      {isLangDropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="absolute z-50 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl overflow-hidden"
+                        >
+                          <div className="max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+                            {LANGUAGES.map((lang) => (
+                              <button
+                                key={lang.code}
+                                type="button"
+                                onClick={() => {
+                                  setLanguage(lang.code);
+                                  setIsLangDropdownOpen(false);
+                                }}
+                                className={`w-full text-left px-4 py-3 text-sm hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors flex items-center justify-between ${
+                                  language === lang.code ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-700 dark:text-gray-300'
+                                }`}
+                              >
+                                {lang.name}
+                                {language === lang.code && <Check className="w-4 h-4" />}
+                              </button>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2 px-1">
@@ -555,27 +625,27 @@ export default function OcrExtractor() {
 
       {/* Optimized SEO Content Block for OCR Extractor */}
       <div className="mt-12 bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 leading-relaxed">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">Highly Accurate Image to Text Converter Online</h2>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">AI Image to Text Converter: High Accuracy Online OCR Free</h2>
         
         <div className="grid md:grid-cols-2 gap-8">
           <div>
-            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Free Online OCR Tool for Any Language</h3>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Multilingual OCR: Hindi, Bengali & English to Text</h3>
             <p className="text-sm mb-4">
-              Our <strong className="text-gray-800 dark:text-gray-100">image to text converter</strong> is a powerful <strong className="text-gray-800 dark:text-gray-100">free online OCR tool</strong> that supports over 10 languages including English, Bengali, Hindi, and more. Whether you need to <strong className="text-gray-800 dark:text-gray-100">extract text from image free</strong> or convert a <strong className="text-gray-800 dark:text-gray-100">photo to text scanner</strong> result, our tool provides highly accurate results. It's the perfect <strong className="text-gray-800 dark:text-gray-100">jpg to word converter</strong> alternative for digitizing your documents.
+              Need to <strong className="text-gray-800 dark:text-gray-100">copy text from image online</strong>? BitBrainTech provides a highly accurate <strong className="text-gray-800 dark:text-gray-100">image to text converter free online</strong>. We specialize in complex scripts, offering the best <strong className="text-gray-800 dark:text-gray-100">hindi to english image to text</strong> extraction and <strong className="text-gray-800 dark:text-gray-100">bangla ocr online free</strong>. Our advanced scanner handles handwritten notes and printed documents with 99% accuracy.
             </p>
           </div>
           <div>
-            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Advanced Handwriting to Text Converter</h3>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Secure Online OCR with Privacy Guarantee</h3>
             <p className="text-sm mb-4">
-              Struggling with messy notes? Our <strong className="text-gray-800 dark:text-gray-100">handwriting to text converter</strong> uses advanced Cloud AI to read and digitize handwritten documents with ease. For printed text, our <strong className="text-gray-800 dark:text-gray-100">local OCR software</strong> runs entirely in your browser, ensuring your sensitive documents are never uploaded to a server. It's a <strong className="text-gray-800 dark:text-gray-100">secure image to text</strong> solution for everyone.
+              BitBrainTech is a <strong className="text-gray-800 dark:text-gray-100">browser-based OCR scanner</strong>. Unlike other platforms, we don't store your documents on a server. It's the most <strong className="text-gray-800 dark:text-gray-100">secure image to text converter</strong> for sensitive work. Extract text from JPG, PNG, and PDF files instantly without any registration or data privacy risks.
             </p>
           </div>
         </div>
 
         <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
-          <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Why Use Our Picture to Text Converter?</h3>
+          <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Why BitBrainTech is the best Online Photo to Text Converter?</h3>
           <p className="text-sm">
-            BitBrainTech offers a comprehensive <strong className="text-gray-800 dark:text-gray-100">picture to text converter</strong> that is fast, free, and private. Use it as a <strong className="text-gray-800 dark:text-gray-100">png to text</strong> tool or to <strong className="text-gray-800 dark:text-gray-100">scan text from image</strong> instantly. You can easily copy the extracted text or download it as a Word document. With our <strong className="text-gray-800 dark:text-gray-100">free OCR online</strong> service, you get professional-grade results without the need for expensive software or subscriptions.
+            Whether you're a student needing to <strong className="text-gray-800 dark:text-gray-100">extract text from image free</strong> or a professional looking for <strong className="text-gray-800 dark:text-gray-100">photo to word converter online</strong>, BitBrainTech delivers. Our tool supports multiple languages and layouts, making it a <strong className="text-gray-800 dark:text-gray-100">premium OCR tool free</strong> for everyone. No daily limits, no watermarks, just high-quality text recognition in seconds.
           </p>
         </div>
       </div>

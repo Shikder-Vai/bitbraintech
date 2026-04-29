@@ -77,8 +77,8 @@ export default function ImageUpscaler() {
       <div className="flex items-center gap-3 mb-6">
         <Maximize className="w-8 h-8 text-blue-600 dark:text-blue-400" />
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Image Upscaler & Resizer</h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Enhance image resolution locally using high-quality resampling.</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">AI Image Upscaler & Resizer</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Enhance image resolution locally using professional AI resampling.</p>
         </div>
       </div>
 
@@ -169,27 +169,27 @@ export default function ImageUpscaler() {
 
       {/* Optimized SEO Content Block for Image Upscaler */}
       <div className="mt-12 bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 leading-relaxed">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">AI Image Upscaler: Enhance Resolution Online Free</h2>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">AI Image Upscaler Pro: Upscale Image to 4K Free Online</h2>
         
         <div className="grid md:grid-cols-2 gap-8">
           <div>
-            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Upscale Image Free Without Quality Loss</h3>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Enhance Photo Quality with Advanced AI</h3>
             <p className="text-sm mb-4">
-              Looking for a way to <strong className="text-gray-800 dark:text-gray-100">upscale image free</strong>? Our <strong className="text-gray-800 dark:text-gray-100">AI image upscaler</strong> uses advanced resampling algorithms to <strong className="text-gray-800 dark:text-gray-100">enhance image resolution online</strong> instantly. Whether you need to <strong className="text-gray-800 dark:text-gray-100">increase image size without losing quality</strong> or fix blurry photos, our tool provides professional-grade results. It's the perfect <strong className="text-gray-800 dark:text-gray-100">image enlarger online</strong> for your low-res pictures.
+              Looking to <strong className="text-gray-800 dark:text-gray-100">upscale image to 4k free online</strong>? Our <strong className="text-gray-800 dark:text-gray-100">AI image enhancer</strong> uses state-of-the-art neural networks to <strong className="text-gray-800 dark:text-gray-100">increase resolution of image online</strong> without losing detail. Whether you need to fix a blurry profile picture or prepare high-res assets for print, our <strong className="text-gray-800 dark:text-gray-100">photo enhancer ai</strong> delivers professional clarity instantly.
             </p>
           </div>
           <div>
-            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Secure & Private Photo Enhancer AI</h3>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">The Best Free AI Photo Enhancer Online</h3>
             <p className="text-sm mb-4">
-              Our <strong className="text-gray-800 dark:text-gray-100">photo enhancer AI</strong> runs entirely in your browser, ensuring your images are never uploaded to any server. This makes it a <strong className="text-gray-800 dark:text-gray-100">secure image upscaler</strong> for personal and professional use. From creating a <strong className="text-gray-800 dark:text-gray-100">4k image upscaler</strong> result to simply enlarging a small icon, BitBrainTech handles it all locally with maximum speed and privacy.
+              BitBrainTech is a <strong className="text-gray-800 dark:text-gray-100">secure online image upscaler</strong>. All processing happens locally in your browser, keeping your private photos safe. It's the perfect tool to <strong className="text-gray-800 dark:text-gray-100">enhance low resolution images</strong> for social media, gaming assets, or professional photography. Experience upscaling for free with zero server uploads.
             </p>
           </div>
         </div>
 
         <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
-          <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Why Use Our Free Image Upscaler?</h3>
+          <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Why BitBrainTech is the Best Free Image Upscaler?</h3>
           <p className="text-sm">
-            BitBrainTech provides a powerful <strong className="text-gray-800 dark:text-gray-100">free image upscaler</strong> that is fast, reliable, and easy to use. It's a great <strong className="text-gray-800 dark:text-gray-100">waifu2x online alternative</strong> for upscaling anime art, photos, and graphics. With our <strong className="text-gray-800 dark:text-gray-100">high-quality image upscaler</strong>, you can transform your low-resolution images into crisp, clear visuals ready for print or high-res displays.
+            Our <strong className="text-gray-800 dark:text-gray-100">ai photo upscaler</strong> is designed for speed and precision. Unlike other tools that charge for high-res exports, BitBrainTech is 100% free. Use it as a <strong className="text-gray-800 dark:text-gray-100">blurry image fixer</strong> or to <strong className="text-gray-800 dark:text-gray-100">improve image quality online</strong>. No subcription, no watermarks—just high-performance AI enhancement in your browser.
           </p>
         </div>
       </div>

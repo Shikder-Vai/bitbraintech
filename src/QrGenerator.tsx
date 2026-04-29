@@ -43,7 +43,7 @@ export default function QrGenerator() {
     <div className="max-w-3xl mx-auto bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
       <div className="flex items-center gap-3 mb-6">
         <QrCode className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">QR & Barcode Generator</h2>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">QR Code & Barcode Generator</h1>
       </div>
 
       <div className="space-y-6">
