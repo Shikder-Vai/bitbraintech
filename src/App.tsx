@@ -8,8 +8,10 @@ const QrGenerator = lazy(() => import('./QrGenerator'));
 const OcrExtractor = lazy(() => import('./OcrExtractor'));
 const ImageUpscaler = lazy(() => import('./ImageUpscaler'));
 const ImageConverter = lazy(() => import('./ImageConverter'));
+const ImageResizer = lazy(() => import('./components/ImageResizer'));
 const PdfTools = lazy(() => import('./PdfTools'));
 const AudioExtractor = lazy(() => import('./AudioExtractor'));
+const AudioEnhancer = lazy(() => import('./components/AudioEnhancer'));
 import ImageBackgroundRemover from './components/ImageBackgroundRemover';
 
 import { FFmpeg } from '@ffmpeg/ffmpeg';
@@ -100,8 +102,10 @@ export default function App() {
   else if (path === '/image-converter') pageKey = 'converter';
   else if (path === '/pdf-tools') pageKey = 'pdf';
   else if (path === '/audio-extractor') pageKey = 'audio';
+  else if (path === '/audio-enhancer') pageKey = 'audio-enhancer';
   else if (path === '/bg-remover') pageKey = 'bg-remover';
   else if (path === '/video-editor') pageKey = 'video-editor';
+  else if (path === '/image-resizer') pageKey = 'image-resizer';
 
   const seoData: Record<string, {title: string, description: string, url: string, applicationName?: string}> = {
     'home': {
@@ -161,10 +165,22 @@ export default function App() {
       url: 'https://bitbraintech.online/audio-extractor',
       applicationName: 'High-Res Audio Extractor'
     },
+    'audio-enhancer': {
+      title: 'AI Audio Enhancer Pro | Remove Background Noise from Audio Free',
+      description: 'The best free AI audio enhancer to remove background noise from audio online. Boost voice clarity and normalize volume instantly. 100% private.',
+      url: 'https://bitbraintech.online/audio-enhancer',
+      applicationName: 'Studio Audio Enhancer & Cleaner'
+    },
     'bg-remover': {
       title: 'Remove Background Online | Best Free Remove BG Tool HD',
       description: 'Instantly remove background from image for free. High-quality background eraser for transparent backgrounds or white backgrounds. 100% private on-device AI.',
       url: 'https://bitbraintech.online/'
+    },
+    'image-resizer': {
+      title: 'Free Image Resizer & Size Compressor | BitBrainTech',
+      description: 'Resize image dimensions (pixels or percentage) and reduce file size (KB/MB) online for free. Adjust quality or specify custom target size limits. 100% private browser-based tool.',
+      url: 'https://bitbraintech.online/image-resizer',
+      applicationName: 'Bulk Image Resizer & Compressor'
     }
   };
 
@@ -481,8 +497,10 @@ export default function App() {
                     { path: '/image-to-text', label: 'Image to Text' },
                     { path: '/image-upscaler', label: 'Image Upscaler' },
                     { path: '/image-converter', label: 'Image Converter' },
+                    { path: '/image-resizer', label: 'Image Resizer' },
                     { path: '/pdf-tools', label: 'PDF Tools' },
-                    { path: '/audio-extractor', label: 'Audio Extractor' }
+                    { path: '/audio-extractor', label: 'Audio Extractor' },
+                    { path: '/audio-enhancer', label: 'Audio Enhancer' }
                   ].map((item) => (
                     <Link key={item.path} to={item.path} className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                       {item.label}
@@ -543,8 +561,10 @@ export default function App() {
               { path: '/image-to-text', label: 'Image to Text' },
               { path: '/image-upscaler', label: 'Image Upscaler' },
               { path: '/image-converter', label: 'Image Converter' },
+              { path: '/image-resizer', label: 'Image Resizer' },
               { path: '/pdf-tools', label: 'PDF Tools' },
-              { path: '/audio-extractor', label: 'Audio Extractor' }
+              { path: '/audio-extractor', label: 'Audio Extractor' },
+              { path: '/audio-enhancer', label: 'Audio Enhancer' }
             ].map((item) => (
               <Link 
                 key={item.path}
@@ -560,7 +580,13 @@ export default function App() {
       </header>
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8">
-        <Routes>
+        <Suspense fallback={
+          <div className="flex flex-col items-center justify-center h-64 space-y-4">
+            <RefreshCw className="w-8 h-8 text-blue-600 animate-spin" />
+            <p className="text-gray-500 font-medium">Loading AI Engine...</p>
+          </div>
+        }>
+          <Routes>
           <Route path="/" element={<ImageBackgroundRemover />} />
           <Route path="/video-editor" element={
             <>
@@ -835,10 +861,13 @@ export default function App() {
           <Route path="/image-to-text" element={<OcrExtractor />} />
           <Route path="/image-upscaler" element={<ImageUpscaler />} />
           <Route path="/image-converter" element={<ImageConverter />} />
+          <Route path="/image-resizer" element={<ImageResizer />} />
           <Route path="/pdf-tools" element={<PdfTools />} />
           <Route path="/audio-extractor" element={<AudioExtractor />} />
+          <Route path="/audio-enhancer" element={<AudioEnhancer />} />
           <Route path="/bg-remover" element={<Link to="/" className="text-blue-600 underline">Go to Home</Link>} />
         </Routes>
+        </Suspense>
       </main>
 
       {/* Global Footer */}

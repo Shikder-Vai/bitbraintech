@@ -1,5 +1,6 @@
 {
   "name": "BitBrainTech",
   "description": "BitBrainTech is a comprehensive suite of professional media tools including an AI Background Remover, Video Metadata Editor, PDF Toolkit, Audio Extractor, Image Upscaler, OCR Extractor, and QR Code Generator. All processing is 100% private and runs locally in your browser.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
